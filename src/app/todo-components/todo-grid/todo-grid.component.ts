@@ -1,37 +1,67 @@
-import { Component } from '@angular/core';
-import {MatTableModule} from '@angular/material/table';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'todo-grid',
   standalone: true,
-  imports: [MatTableModule,TodoCheckboxComponent],
+  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule],
   templateUrl: './todo-grid.component.html',
-  styleUrl: './todo-grid.component.scss'
+  styleUrls: ['./todo-grid.component.scss'],
 })
-export class TodoGridComponent {
-  displayedColumns: string[] = ['day','books', 'skills', 'meditate', 'exercise','completed'];
-  dataSource = ELEMENT_DATA;
+export class TodoGridComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['day', 'books', 'skills', 'meditate', 'exercise', 'completed'];
+  dataSource = new MatTableDataSource<PeriodicElement>();
+
+  @ViewChild(MatPaginator) paginator !: MatPaginator;
+
+  ngOnInit(): void {
+    this.initializeGridData();
+  }
+
+  ngAfterViewInit(): void {
+    // Assign paginator to the dataSource after view initialization
+    this.dataSource.paginator = this.paginator;
+  }
+
+  initializeGridData(): void {
+    // Generate 100 rows with default values
+    this.dataSource.data = Array.from({ length: 100 }, (_, index) => ({
+      day: `Day ${index + 1}`,
+      books: false,
+      skills: false,
+      meditate: false,
+      exercise: false,
+      completed: this.updateAndGetCompletedPercentage({ books: false, skills: false, meditate: false, exercise: false }, false), // Initial value
+    }));
+  }
+
+  onCheckboxChange(row: any, field: string, checked: boolean): void {
+    row[field] = checked;
+    this.updateAndGetCompletedPercentage(row);
+  }
+
+  updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
+    const totalFields = ['books', 'skills', 'meditate', 'exercise'];
+    const completedCount = totalFields.filter(field => row[field] === true).length;
+    const percentage = (completedCount / totalFields.length) * 100;
+
+    if (updateRow) {
+      row.completed = `${percentage}%`;
+    }
+
+    return `${percentage}%`;
+  }
 }
 
 export interface PeriodicElement {
   skills: boolean;
-  books: number;
-  meditate: number;
-  exercise: string;
-  day : string;
-  completed : string;
+  books: boolean;
+  meditate: boolean;
+  exercise: boolean;
+  day: string;
+  completed: string;
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  { books: 1, skills: false, meditate: 1.0079, exercise: 'H', day: 'day1', completed: '25%' },
-  { books: 2, skills: true, meditate: 4.0026, exercise: 'He', day: 'day2', completed: '30%' },
-  { books: 3, skills: false, meditate: 6.941, exercise: 'Li', day: 'day3', completed: '45%' },
-  { books: 4, skills: true, meditate: 9.0122, exercise: 'Be', day: 'day4', completed: '50%' },
-  { books: 5, skills: false, meditate: 10.811, exercise: 'B', day: 'day5', completed: '35%' },
-  { books: 6, skills: true, meditate: 12.0107, exercise: 'C', day: 'day6', completed: '60%' },
-  { books: 7, skills: true, meditate: 14.0067, exercise: 'N', day: 'day7', completed: '70%' },
-  { books: 8, skills: true, meditate: 15.9994, exercise: 'O', day: 'day8', completed: '80%' },
-  { books: 9, skills: true, meditate: 18.9984, exercise: 'F', day: 'day9', completed: '90%' },
-  { books: 10, skills: true, meditate: 20.1797, exercise: 'Ne', day: 'day10', completed: '100%' }
-]
