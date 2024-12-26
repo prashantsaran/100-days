@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox.component';
@@ -15,20 +15,24 @@ import { MatTableDataSource } from '@angular/material/table';
 export class TodoGridComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['day', 'books', 'skills', 'meditate', 'exercise', 'completed'];
   dataSource = new MatTableDataSource<PeriodicElement>();
-
+  @Output() tasksUpdated = new EventEmitter<any[]>();
   @ViewChild(MatPaginator) paginator !: MatPaginator;
 
   ngOnInit(): void {
     this.initializeGridData();
+    setTimeout(()=>{
+      this.ngAfterViewInit();
+    },200)
+
+    this.emitTaskData();
   }
 
   ngAfterViewInit(): void {
-    // Assign paginator to the dataSource after view initialization
+  
     this.dataSource.paginator = this.paginator;
   }
 
   initializeGridData(): void {
-    // Generate 100 rows with default values
     this.dataSource.data = Array.from({ length: 100 }, (_, index) => ({
       day: `Day ${index + 1}`,
       books: false,
@@ -36,12 +40,18 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
       meditate: false,
       exercise: false,
       completed: this.updateAndGetCompletedPercentage({ books: false, skills: false, meditate: false, exercise: false }, false), // Initial value
+      isCompleted:false
     }));
   }
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
     this.updateAndGetCompletedPercentage(row);
+    this.emitTaskData();
+  }
+
+  emitTaskData() {
+    this.tasksUpdated.emit(this.dataSource.data);
   }
 
   updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
