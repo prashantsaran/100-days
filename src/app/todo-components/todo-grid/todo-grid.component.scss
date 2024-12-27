@@ -1,0 +1,10 @@
+::ng-deep .mat-snack-bar-container {
+    background-color: #4caf50; /* Green background for success */
+    color: blueviolet;
+    font-size: 16px;
+  }
+  
+  ::ng-deep .mat-snack-bar-container.error {
+    background-color: #f44336; /* Red background for errors */
+  }
+  
