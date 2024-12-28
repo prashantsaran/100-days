@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   Output,
   EventEmitter,
+  ViewEncapsulation,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -103,38 +104,37 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
   saveGridData(): void {
 
     this.snackBar.open('Data saved successfully!', 'Close', {
-      duration: 3000, // Show for 3 seconds
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
+      duration: 100000, // Show for 3 seconds
+      panelClass: 'top-right-snackbar',
     });
   
-    const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
+    // const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
   
-    const batchPromises = this.dataSource.data.map((row) =>
-      setDoc(doc(todoCollection, row.day), {
-        ...row,
-        dayNumber: parseInt(row.day.split(' ')[1]),
-      })
-    );
+    // const batchPromises = this.dataSource.data.map((row) =>
+    //   setDoc(doc(todoCollection, row.day), {
+    //     ...row,
+    //     dayNumber: parseInt(row.day.split(' ')[1]),
+    //   })
+    // );
   
-    Promise.all(batchPromises)
-      .then(() => {
-        this.updateLocalCache(this.dataSource.data);
-        console.log('Data successfully saved to Firestore!');
-        this.snackBar.open('Data saved successfully!', 'Close', {
-          duration: 3000, // Show for 3 seconds
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
-      })
-      .catch((error) => {
-        console.error('Error saving data to Firestore:', error);
-        this.snackBar.open('Failed to save data. Please try again.', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
-      });
+    // Promise.all(batchPromises)
+    //   .then(() => {
+    //     this.updateLocalCache(this.dataSource.data);
+    //     console.log('Data successfully saved to Firestore!');
+    //     this.snackBar.open('Data saved successfully!', 'Close', {
+    //       duration: 30000, // Show for 3 seconds
+    //       horizontalPosition: 'center',
+    //       verticalPosition: 'bottom',
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error saving data to Firestore:', error);
+    //     this.snackBar.open('Failed to save data. Please try again.', 'Close', {
+    //       duration: 3000,
+    //       horizontalPosition: 'center',
+    //       verticalPosition: 'bottom',
+    //     });
+      // });
   }
   
   private updateLocalCache(data: PeriodicElement[]): void {

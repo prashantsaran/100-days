@@ -4,7 +4,15 @@
     font-size: 16px;
   }
   
-  ::ng-deep .mat-snack-bar-container.error {
-    background-color: #f44336; /* Red background for errors */
-  }
+
+
   
+.save-button-container{
+  position: absolute;
+  right: 16%;
+  bottom: 8%;
+}
+::ng-deep .cdk-overlay-pane.mat-mdc-select-panel-above {
+  position: relative !important;
+  background: white; 
+}
