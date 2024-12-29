@@ -46,7 +46,7 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
       this.ngAfterViewInit();
     }, 200);
 
-    this.emitTaskData();
+    // this.emitTaskData();
   }
 
   ngAfterViewInit(): void {
