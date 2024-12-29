@@ -80,6 +80,8 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
+    row.isCompleted = row.books && row.skills && row.meditate && row.exercise;
+
     this.updateAndGetCompletedPercentage(row);
     this.updateLocalCache(this.dataSource.data); // Update local cache only
     this.emitTaskData();

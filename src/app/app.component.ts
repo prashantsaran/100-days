@@ -48,9 +48,9 @@ onTasksUpdated(updatedTasks: any[]) {
 
 calculateProgress() {
   // Recalculate completion status for each task
-  this.tasks.forEach(task => {
-    task.isCompleted = task.books && task.skills && task.meditate && task.exercise;
-  });
+  // this.tasks.forEach(task => {
+  //   task.isCompleted = task.books && task.skills && task.meditate && task.exercise;
+  // });
 
   // Weekly Progress (last week's percentage)
   const currentWeekTasks = this.getSegmentedTasks(7);
@@ -72,6 +72,6 @@ getSegmentedTasks(days: number): any[] {
 calculatePercentage(tasks: any[]): number {
   const totalTasks = tasks.length;
   const completedTasks = this.tasks.filter(task => task.isCompleted).length;
-  return Math.round((completedTasks / totalTasks) * 100);
+  return Math.round((completedTasks % totalTasks)/totalTasks * 100);
 }
 }
