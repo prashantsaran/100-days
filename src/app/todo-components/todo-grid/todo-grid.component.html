@@ -63,5 +63,6 @@
 <mat-paginator [length]="dataSource.data.length" [pageSize]="7" [pageSizeOptions]="[7, 10, 25]" showFirstLastButtons></mat-paginator>
 
 <div class="save-button-container">
-  <button mat-raised-button class="primary" color="accent" (click)="saveGridData()">Save Changes</button>
+  <button mat-raised-button >Reset</button>
+  <button mat-raised-button  (click)="saveGridData()">Save Changes</button>
 </div>

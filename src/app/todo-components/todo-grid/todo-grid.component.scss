@@ -1,8 +1,8 @@
-::ng-deep .mat-snack-bar-container {
-    background-color: #4caf50; /* Green background for success */
-    color: blueviolet;
-    font-size: 16px;
-  }
+// ::ng-deep .mat-snack-bar-container {
+//     background-color: black; /* Green background for success */
+//     color: white;
+//     font-size: 16px;
+//   }
   
 
 
@@ -15,4 +15,14 @@
 ::ng-deep .cdk-overlay-pane.mat-mdc-select-panel-above {
   position: relative !important;
   background: white; 
+}
+.save-button-container{
+    display: flex !important;
+    gap: 30px !important;
+    position: absolute;
+    right: 254px;
+    button{
+    background: black;
+    color: white;
+    }
 }
