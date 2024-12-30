@@ -7,6 +7,8 @@ import {
   EventEmitter,
   ViewEncapsulation,
   Input,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -16,6 +18,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { collection, doc, Firestore, getDocs, setDoc, query, orderBy } from '@angular/fire/firestore';
 import { MatSnackBarModule ,MatSnackBar} from '@angular/material/snack-bar';
 import {MatButtonModule} from '@angular/material/button';
+import { TodoService } from '../todo.service';
 @Component({
   selector: 'todo-grid',
   standalone: true,
@@ -23,7 +26,11 @@ import {MatButtonModule} from '@angular/material/button';
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
-export class TodoGridComponent implements OnInit, AfterViewInit {
+export class TodoGridComponent implements  AfterViewInit ,OnChanges{
+
+  @Input()
+  tasks :any[] = [];
+
   displayedColumns: string[] = [
     'day',
     'books',
@@ -32,6 +39,7 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
     'exercise',
     'completed',
   ];
+
   dataSource = new MatTableDataSource<PeriodicElement>();
   @Output() tasksUpdated = new EventEmitter<any[]>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -39,52 +47,27 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
   private readonly STORAGE_KEY = 'todoGridData';
   private readonly FIRESTORE_COLLECTION = 'todoGrid';
 
-  constructor(private firestore: Firestore, private snackBar: MatSnackBar) {}
+  constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService) {}
 
-  ngOnInit(): void {
-    this.initializeGridData();
-    setTimeout(() => {
-      this.ngAfterViewInit();
-    }, 200);
 
-    // this.emitTaskData();
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['tasks'] && changes['tasks'].currentValue) {
+      this.dataSource.data = changes['tasks'].currentValue;
+    }
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
-  async initializeGridData(): Promise<void> {
-    try {
-      const cachedData = localStorage.getItem(this.STORAGE_KEY);
-      const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
-      const orderedQuery = query(todoCollection, orderBy('dayNumber'));
-      const querySnapshot = await getDocs(orderedQuery);
-
-      if (cachedData) {
-        console.log('Loading data from local cache...');
-        this.dataSource.data = JSON.parse(cachedData);
-      } else if (!querySnapshot.empty) {
-        console.log('Loading data from Firestore...');
-        const firebaseData = querySnapshot.docs.map((doc) => doc.data() as PeriodicElement);
-        this.dataSource.data = firebaseData;
-        this.updateLocalCache(firebaseData);
-      } else {
-        console.log('Initializing new grid data...');
-        this.dataSource.data = this.generateDefaultData();
-        this.updateLocalCache(this.dataSource.data);
-      }
-    } catch (error) {
-      console.error('Error initializing grid data:', error);
-    }
-  }
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
     row.isCompleted = row.books && row.skills && row.meditate && row.exercise;
 
-    this.updateAndGetCompletedPercentage(row);
-    this.updateLocalCache(this.dataSource.data); // Update local cache only
+    this.todoService.updateAndGetCompletedPercentage(row);
+    this.todoService.updateLocalCache(this.dataSource.data); 
     this.emitTaskData();
   }
 
@@ -106,10 +89,6 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
 
   saveGridData(): void {
 
-    // this.snackBar.open('Data saved successfully!', 'Close', {
-    //   duration: 100000, // Show for 3 seconds
-    //   panelClass: 'top-right-snackbar',
-    // });
   
     const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
   
@@ -122,10 +101,10 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
   
     Promise.all(batchPromises)
       .then(() => {
-        this.updateLocalCache(this.dataSource.data);
+        this.todoService.updateLocalCache(this.dataSource.data);
         console.log('Data successfully saved to Firestore!');
         this.snackBar.open('Data saved successfully!', 'Close', {
-          duration: 30000, // Show for 3 seconds
+          duration: 30000, 
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
         });
@@ -140,25 +119,6 @@ export class TodoGridComponent implements OnInit, AfterViewInit {
       });
   }
   
-  private updateLocalCache(data: PeriodicElement[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-  }
-
-  private generateDefaultData(): PeriodicElement[] {
-    return Array.from({ length: 100 }, (_, index) => ({
-      day: `Day ${index + 1}`,
-      dayNumber: index + 1,
-      books: false,
-      skills: false,
-      meditate: false,
-      exercise: false,
-      completed: this.updateAndGetCompletedPercentage(
-        { books: false, skills: false, meditate: false, exercise: false },
-        false
-      ),
-      isCompleted: false,
-    }));
-  }
 }
 
 export interface PeriodicElement {

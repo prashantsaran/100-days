@@ -5,7 +5,7 @@
  
 
 <div class="items">
-  <todo-grid (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
+  <todo-grid [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
   <div class="progress-bar">
     <!-- Weekly Progress -->
     <h2>Weekly Progress</h2>
