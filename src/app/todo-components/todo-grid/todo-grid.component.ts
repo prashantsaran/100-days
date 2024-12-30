@@ -104,7 +104,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
         this.todoService.updateLocalCache(this.dataSource.data);
         console.log('Data successfully saved to Firestore!');
         this.snackBar.open('Data saved successfully!', 'Close', {
-          duration: 30000, 
+          duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
         });
