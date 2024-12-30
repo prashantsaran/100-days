@@ -6,6 +6,7 @@ import {
   Output,
   EventEmitter,
   ViewEncapsulation,
+  Input,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
