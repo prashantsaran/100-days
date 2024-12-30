@@ -53,7 +53,7 @@ export class TodoService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
   }
 
-      private generateDefaultData(): PeriodicElement[] {
+     generateDefaultData(): PeriodicElement[] {
         return Array.from({ length: 100 }, (_, index) => ({
           day: `Day ${index + 1}`,
           dayNumber: index + 1,

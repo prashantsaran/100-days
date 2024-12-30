@@ -19,10 +19,13 @@ import { collection, doc, Firestore, getDocs, setDoc, query, orderBy } from '@an
 import { MatSnackBarModule ,MatSnackBar} from '@angular/material/snack-bar';
 import {MatButtonModule} from '@angular/material/button';
 import { TodoService } from '../todo.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+
 @Component({
   selector: 'todo-grid',
   standalone: true,
-  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule],
+  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule],
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
@@ -47,7 +50,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
   private readonly STORAGE_KEY = 'todoGridData';
   private readonly FIRESTORE_COLLECTION = 'todoGrid';
 
-  constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService) {}
+  constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {}
 
 
 
@@ -117,6 +120,36 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
           verticalPosition: 'bottom',
         });
       });
+  }
+
+  openResetDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { message: 'Are you sure you want to reset all data?' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.resetData();
+      }
+    });
+  }
+
+  resetData(): void {
+    // Reset the data to default
+    const defaultData = this.todoService.generateDefaultData();
+    this.dataSource.data = defaultData;
+
+    // Update local cache and emit tasks
+    this.todoService.updateLocalCache(defaultData);
+    this.emitTaskData();
+
+    // Show success snackbar
+    this.snackBar.open('Data has been reset successfully!', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
   
 }
