@@ -20,7 +20,7 @@ import { MatSnackBarModule ,MatSnackBar} from '@angular/material/snack-bar';
 import {MatButtonModule} from '@angular/material/button';
 import { TodoService } from '../todo.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'todo-grid',
@@ -39,7 +39,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
     'books',
     'skills',
     'meditate',
-    'exercise',
+    'workout',
     'completed',
   ];
 
@@ -67,7 +67,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
-    row.isCompleted = row.books && row.skills && row.meditate && row.exercise;
+    row.isCompleted = row.books && row.skills && row.meditate && row.workout;
 
     this.todoService.updateAndGetCompletedPercentage(row);
     this.todoService.updateLocalCache(this.dataSource.data); 
@@ -79,7 +79,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
   }
 
   updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
-    const totalFields = ['books', 'skills', 'meditate', 'exercise'];
+    const totalFields = ['books', 'skills', 'meditate', 'workout'];
     const completedCount = totalFields.filter((field) => row[field] === true).length;
     const percentage = (completedCount / totalFields.length) * 100;
 
@@ -139,7 +139,9 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
     // Reset the data to default
     const defaultData = this.todoService.generateDefaultData();
     this.dataSource.data = defaultData;
-
+  
+    this.saveGridData();
+    
     // Update local cache and emit tasks
     this.todoService.updateLocalCache(defaultData);
     this.emitTaskData();
@@ -158,7 +160,7 @@ export interface PeriodicElement {
   skills: boolean;
   books: boolean;
   meditate: boolean;
-  exercise: boolean;
+  workout: boolean;
   day: string;
   dayNumber: number;
   completed: string;

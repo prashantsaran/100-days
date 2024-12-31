@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { TodoGridComponent } from "./todo-components/todo-grid/todo-grid.component";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { TodoService } from './todo-components/todo.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TodoGridComponent } from '../todo-grid/todo-grid.component';
 import { RouterOutlet } from '@angular/router';
+import { TodoService } from '../todo.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-home',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule,RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
 })
-export class AppComponent implements OnInit {
+export class HomeComponent implements OnInit {
   title = '100-days';
 
   // Tasks data received from todo-grid

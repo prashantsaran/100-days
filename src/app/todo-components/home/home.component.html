@@ -1,0 +1,29 @@
+<div class="container">
+    <div>
+    <h1>{{ title }}</h1>
+    </div>
+   
+  
+  <div class="items">
+    <todo-grid [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
+    <div class="progress-bar">
+      <!-- Weekly Progress -->
+      <h2>Weekly Progress</h2>
+      <mat-progress-bar [value]="weekCompletion" mode="determinate"></mat-progress-bar>
+      <p>{{ weekCompletion }}% completed this week</p>
+    
+      <!-- Monthly Progress -->
+      <h2>Monthly Progress</h2>
+      <mat-progress-bar [value]="monthCompletion" mode="determinate"></mat-progress-bar>
+      <p>{{ monthCompletion }}% completed this month</p>
+    
+      <!-- Overall Progress -->
+      <h2>Overall Progress</h2>
+      <mat-progress-bar [value]="overallCompletion" mode="determinate"></mat-progress-bar>
+      <p>{{ overallCompletion }}% completed (100 days)</p>
+    </div>
+  </div>
+    <!-- Task Grid -->
+  
+  </div>
+  

@@ -38,12 +38,12 @@
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="exercise">
-    <th mat-header-cell *matHeaderCellDef> Exercise </th>
+  <ng-container matColumnDef="workout">
+    <th mat-header-cell *matHeaderCellDef> Workout </th>
     <td mat-cell *matCellDef="let element">
       <todo-checkbox 
-        [checked]="element.exercise" 
-        (stateChange)="onCheckboxChange(element, 'exercise', $event)">
+        [checked]="element.workout" 
+        (stateChange)="onCheckboxChange(element, 'workout', $event)">
       </todo-checkbox>
     </td>
   </ng-container>

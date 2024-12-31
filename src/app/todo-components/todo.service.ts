@@ -60,9 +60,9 @@ export class TodoService {
           books: false,
           skills: false,
           meditate: false,
-          exercise: false,
+          workout: false,
           completed: this.updateAndGetCompletedPercentage(
-            { books: false, skills: false, meditate: false, exercise: false },
+            { books: false, skills: false, meditate: false, workout: false },
             false
           ),
           isCompleted: false,
@@ -70,7 +70,7 @@ export class TodoService {
       }
 
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
-        const totalFields = ['books', 'skills', 'meditate', 'exercise'];
+        const totalFields = ['books', 'skills', 'meditate', 'workout'];
         const completedCount = totalFields.filter((field) => row[field] === true).length;
         const percentage = (completedCount / totalFields.length) * 100;
     

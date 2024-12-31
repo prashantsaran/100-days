@@ -10,6 +10,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideAnimations(),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideFirestore(() => getFirestore()), { provide: FIREBASE_OPTIONS, useValue: firebaseConfig }
+    provideFirestore(() => getFirestore()), { provide: FIREBASE_OPTIONS, useValue: firebaseConfig },
+    
   ]
 };
