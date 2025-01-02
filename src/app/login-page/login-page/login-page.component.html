@@ -33,7 +33,7 @@
           </a>
         }
       </div>
-  
+  <div class="register-login-btn">
       @if(!isLoggingIn) {
         <button mat-raised-button color="primary"  [ngClass]="{
             'invalid-form': !form.valid}"
@@ -46,7 +46,7 @@
           <mat-spinner color="accent" diameter="20"></mat-spinner>
         </button>
       }
-  
+      <div class="divider">OR </div>
       @if(!isRegistering) {
         <button mat-raised-button color="primary"  [ngClass]="{
             'invalid-form': !form.valid}" [disabled]="!form.valid" (click)="register()">
@@ -55,9 +55,10 @@
       }
       @else {
         <button mat-stroked-button color="primary" class="button-loader">
-          <mat-spinner color="primary" diameter="20"></mat-spinner>
+          <mat-spinner color="primary" diameter="20" ></mat-spinner>
         </button>
       }
+    </div>
   
       <div class="divider">OR sign in using</div>
       <div class="google-logo">

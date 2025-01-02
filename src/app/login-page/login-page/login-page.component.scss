@@ -33,6 +33,7 @@
     color: #d32f2f;
     font-size: 0.875rem;
     margin-top: -8px;
+    display: inline-block;
   }
   
   .actions {
@@ -70,14 +71,14 @@
   .google-logo {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
+    // margin-top: 1rem;
     cursor: pointer;
   }
   
   .google-logo svg {
     width: 40px;
     height: 40px;
-    fill: #4285f4;
+    fill: black;
     transition: transform 0.3s ease;
   }
   
@@ -86,20 +87,18 @@
   }
   
   mat-form-field ::ng-deep{
-  line-height: 30px;
+  // line-height: 30px;
 
-  .mdc-floating-label--float-above{
-    margin-top:13px !important;
-  }
+ 
   .mat-mdc-form-field-bottom-align{
     display: none !important;
   }
   }
 
-  button{
-    background-color: black !important;
-    color: white !important;
-  }
+  // button{
+  //   background-color: black !important;
+  //   color: white !important;
+  // }
 
 
   .invalid-form{
@@ -112,6 +111,21 @@
   }
 
   form{
-    height: 460px !important;
+    height: 508px !important;
 
+  }
+
+  .register-login-btn{
+    display: flex !important;
+  }
+
+  .register-login-btn{
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    button{
+      width: 250px;
+      
+    }
   }
