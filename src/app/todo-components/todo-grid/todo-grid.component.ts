@@ -29,7 +29,7 @@ import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
-export class TodoGridComponent implements  AfterViewInit ,OnChanges{
+export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit{
 
   @Input()
   tasks :any[] = [];
@@ -57,11 +57,15 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges{
   ngOnChanges(changes: SimpleChanges) {
     if (changes['tasks'] && changes['tasks'].currentValue) {
       this.dataSource.data = changes['tasks'].currentValue;
+      this.dataSource.paginator = this.paginator;
     }
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+  }
+  ngOnInit(){
+this.todoService.initializeGridData();
   }
 
 

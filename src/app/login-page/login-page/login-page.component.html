@@ -1,28 +1,70 @@
-<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
-    <mat-card class="box">
-      <mat-card-header>
-        <mat-card-title>Register</mat-card-title>
-      </mat-card-header>
-  <form class="example-form">
-  <mat-card-content>
-          <mat-form-field class="example-full-width">
-            <input matInput placeholder="Username">
-          </mat-form-field>
-  <mat-form-field class="example-full-width">
-            <input matInput placeholder="Email">
-          </mat-form-field>
-  <mat-form-field class="example-full-width">
-            <input matInput placeholder="Password">
-          </mat-form-field>
-  <mat-form-field class="example-full-width">
-            <mat-label>Choose a role...</mat-label>
-            <mat-select>
-              <mat-option [value]="roles" *ngFor="let roles of Roles">{{roles}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  </mat-card-content>
-  <button mat-stroked-button color="accent" class="btn-block">Register</button>
-  </form>
-    </mat-card>
-  </div>
+<main class="login-container">
+    <form class="login-form" [formGroup]="form">
+      <h1>Enter with your account</h1>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input type="email" matInput placeholder="Ex: pat@example.com" formControlName="email">
+      </mat-form-field>
+      @if(form.get('email')!.hasError('required')) {
+        <span class="error-text">Email is required</span>
+      }
+      @if(form.get('email')!.hasError('email')) {
+        <span class="error-text">Email is invalid</span>
+      }
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput placeholder="Password" formControlName="password">
+      </mat-form-field>
+      @if(form.get('password')!.hasError('required')) {
+        <span class="error-text">Password is required</span>
+      }
+  
+      <div class="actions">
+        @if(isRecoveringPassword) {
+          <button mat-button color="primary" class="button-loader recover-password" test-id="recover-password-loader">
+            <mat-spinner color="primary" diameter="20"></mat-spinner>
+          </button>
+        }
+        @else {
+          <a  mat-button class="underlined" color="primary" [disabled]="!form.get('email')!.valid" (click)="recoverPassword()" test-id="recover-password-button">
+            Forgot password?
+          </a>
+        }
+      </div>
+  
+      @if(!isLoggingIn) {
+        <button mat-raised-button color="primary"  [ngClass]="{
+            'invalid-form': !form.valid}"
+             [disabled]="!form.valid" (click)="login()" test-id="login-button">
+          LOGIN
+        </button>
+      }
+      @else {
+        <button mat-raised-button color="primary" class="button-loader" test-id="login-loader">
+          <mat-spinner color="accent" diameter="20"></mat-spinner>
+        </button>
+      }
+  
+      @if(!isRegistering) {
+        <button mat-raised-button color="primary"  [ngClass]="{
+            'invalid-form': !form.valid}" [disabled]="!form.valid" (click)="register()">
+          REGISTER
+        </button>
+      }
+      @else {
+        <button mat-stroked-button color="primary" class="button-loader">
+          <mat-spinner color="primary" diameter="20"></mat-spinner>
+        </button>
+      }
+  
+      <div class="divider">OR sign in using</div>
+      <div class="google-logo">
+        <svg (click)="signUpWithGoogle()" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+          <path d="M26 2C13.31 2 3 12.31 3 25s10.31 23 23 23c9.92 0 15.98-4.56 19.12-10.22C48.28 32.12 48.68 25.48 47.72 20.94l-.19-.78h-1.28L26 20.13l-1 0v10.4h11.44c-1.73 4-5.25 6.75-10.44 6.75-6.79 0-12.28-5.49-12.28-12.28S19.21 12.72 26 12.72c3.05 0 5.82 1.13 7.97 2.97l.72.59 6.84-6.84.72-.75-.75-.69C37.41 4.28 31.96 2 26 2z"></path>
+        </svg>
+      </div>
+    </form>
+  </main>
+  
