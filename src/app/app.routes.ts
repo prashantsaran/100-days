@@ -6,7 +6,12 @@ import { LoginPageComponent } from './login-page/login-page/login-page.component
 export const routes: Routes = [
     {
         path:'',
-        component : LoginPageComponent,
+        redirectTo :'login',
+        pathMatch : 'full',
+    },
+    {
+        path: 'login',
+        component: LoginPageComponent
     },
     {
         path :'home',

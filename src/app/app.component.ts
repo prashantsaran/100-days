@@ -8,7 +8,7 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule,RouterOutlet],
+  imports: [MatProgressBarModule, MatProgressSpinnerModule,RouterOutlet,],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -31,6 +31,9 @@ export class AppComponent implements OnInit {
       this.tasks=this.todoService.tasks;
       this.calculateProgress();
     },500)
+
+    // this.themeService.setTheme('theme-light'); // Default theme
+
    
   }
 
@@ -66,7 +69,8 @@ getSegmentedTasks(days: number): any[] {
 }
 
   calculatePercentage(days: number): number {
-
+    // const totalTasks = tasks.length;
+    // if (totalTasks === 0) return 0; // Avoid division by zero
     const completedTasks = this.tasks.filter(task => task.isCompleted).length;
     return Math.round((completedTasks%days )/ days * 100);
   }

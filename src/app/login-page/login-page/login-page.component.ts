@@ -8,12 +8,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import {  MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule,MatSnackBarModule, ReactiveFormsModule, MatButtonModule,MatFormFieldModule , MatSelectModule, CommonModule,MatProgressSpinnerModule ],
+  imports: [MatSnackBarModule,MatInputModule, ReactiveFormsModule, MatButtonModule,MatFormFieldModule , CommonModule,MatProgressSpinnerModule ,
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })
@@ -65,6 +67,7 @@ export class LoginPageComponent implements OnInit {
     this.authService.register({ email, password }).subscribe({
       next: () => {
         this.isRegistering = false;
+        this.authService.isUserLoggedIn=true;
         this.snackBar.open('Registration successful! Please log in.', 'OK', {
           duration: 5000,
         });

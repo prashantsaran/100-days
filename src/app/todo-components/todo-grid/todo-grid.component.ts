@@ -12,15 +12,15 @@ import {
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { collection, doc, Firestore, getDocs, setDoc, query, orderBy } from '@angular/fire/firestore';
+import { collection, doc, Firestore, setDoc } from '@angular/fire/firestore';
 import { MatSnackBarModule ,MatSnackBar} from '@angular/material/snack-bar';
 import {MatButtonModule} from '@angular/material/button';
 import { TodoService } from '../todo.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog.component';
+import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox/todo-checkbox.component';
 
 @Component({
   selector: 'todo-grid',
