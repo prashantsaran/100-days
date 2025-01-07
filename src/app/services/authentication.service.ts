@@ -8,15 +8,18 @@ import { catchError, from, Observable, throwError } from 'rxjs';
 })
 export class AuthenticationService {
 
-  constructor(private auth: AngularFireAuth) { }
+  constructor(private auth: AngularFireAuth) {
+    this.isUserLoggedIn = localStorage.getItem('isUserLoggedIn') === 'true';
+   }
 
   private isLoggedIn:boolean = false;
 
   get isUserLoggedIn():boolean{
-    return this.isLoggedIn;
+    return localStorage.getItem('isUserLoggedIn') === 'true';
   }
 
   set isUserLoggedIn(value:boolean){
+    localStorage.setItem('isUserLoggedIn', value.toString());
     this.isLoggedIn = value;
   }
 
@@ -53,7 +56,11 @@ export class AuthenticationService {
     }
     return message;
   }
- 
+
+  signOut(): void {
+    this.isUserLoggedIn = false;
+    localStorage.removeItem('isUserLoggedIn');
+  }
 
   signInWithGoogle(): Observable<any> {
     const auth = getAuth(); // Ensure Firebase is initialized

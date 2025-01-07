@@ -21,11 +21,13 @@ import { TodoService } from '../todo.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog.component';
 import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox/todo-checkbox.component';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'todo-grid',
   standalone: true,
-  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule],
+  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule,CommonModule,MatProgressSpinnerModule],
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })

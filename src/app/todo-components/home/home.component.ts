@@ -4,11 +4,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TodoGridComponent } from '../todo-grid/todo-grid.component';
 import { RouterOutlet } from '@angular/router';
 import { TodoService } from '../todo.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent],
+  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -22,7 +24,7 @@ export class HomeComponent implements OnInit {
   weekCompletion = 0;
   monthCompletion = 0;
   overallCompletion = 0;
-  constructor(private todoService: TodoService) {}
+  constructor(private todoService: TodoService,private authService : AuthenticationService) {}
 
    ngOnInit() {
     this.todoService.initializeGridData();
@@ -43,6 +45,10 @@ export class HomeComponent implements OnInit {
     this.calculateProgress();
   }
 
+  logOut(){
+    this.authService.signOut();
+    
+      }
 
   calculateProgress() {
     if (!this.tasks || this.tasks.length === 0) {
