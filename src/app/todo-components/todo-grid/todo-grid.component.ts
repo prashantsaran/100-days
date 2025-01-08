@@ -23,6 +23,7 @@ import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog
 import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox/todo-checkbox.component';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-popup/add-delete-column-popup.component';
 
 @Component({
   selector: 'todo-grid',
@@ -32,6 +33,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrls: ['./todo-grid.component.scss'],
 })
 export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit{
+
 
   @Input()
   tasks :any[] = [];
@@ -80,20 +82,35 @@ this.todoService.initializeGridData();
     this.emitTaskData();
   }
 
+  openAddorDeletePopup() {
+    const dialogRef = this.dialog.open(AddDeleteColumnPopupComponent, {
+      width: '400px',
+      data: this.displayedColumns
+    });
+
+    dialogRef.afterClosed().subscribe((result: string[] | undefined) => {
+      if (result) {
+        this.displayedColumns = result; 
+        this.todoService.initializeGridData();
+        this.dataSource.data=this.todoService.generateDefaultData(this.displayedColumns);
+      }
+    });
+    
+  }    
   emitTaskData(): void {
     this.tasksUpdated.emit(this.dataSource.data);
   }
 
-  updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
+  updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): number {
     const totalFields = ['books', 'skills', 'meditate', 'workout'];
     const completedCount = totalFields.filter((field) => row[field] === true).length;
     const percentage = (completedCount / totalFields.length) * 100;
 
     if (updateRow) {
-      row.completed = `${percentage}%`;
+      row.completed = percentage;
     }
 
-    return `${percentage}%`;
+    return percentage;
   }
 
   saveGridData(): void {
@@ -143,7 +160,7 @@ this.todoService.initializeGridData();
 
   resetData(): void {
     // Reset the data to default
-    const defaultData = this.todoService.generateDefaultData();
+    const defaultData = this.todoService.generateDefaultData(this.displayedColumns);
     this.dataSource.data = defaultData;
   
     this.saveGridData();

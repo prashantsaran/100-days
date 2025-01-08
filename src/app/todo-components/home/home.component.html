@@ -8,6 +8,13 @@
   
   <div class="items">
     <todo-grid [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
+    <div class="right-item">
+      <div class="save-button-container">
+        <button mat-raised-button  (click)="openAddorDeletePopup()">Add/Delete Columns</button>
+      <button mat-raised-button (click)="openResetDialog()" >Reset</button>
+      <button mat-raised-button  (click)="saveGridData()">Save Changes</button>
+     
+    </div>
     <div class="progress-bar">
       <!-- Weekly Progress -->
       <h2>Weekly Progress</h2>
@@ -24,6 +31,7 @@
       <mat-progress-bar [value]="overallCompletion" mode="determinate"></mat-progress-bar>
       <p>{{ overallCompletion }}% completed (100 days)</p>
     </div>
+  </div>
   </div>
     <!-- Task Grid -->
   

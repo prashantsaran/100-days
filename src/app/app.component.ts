@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TodoGridComponent } from "./todo-components/todo-grid/todo-grid.component";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TodoService } from './todo-components/todo.service';
@@ -32,7 +31,6 @@ export class AppComponent implements OnInit {
       this.calculateProgress();
     },500)
 
-    // this.themeService.setTheme('theme-light'); // Default theme
 
    
   }

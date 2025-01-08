@@ -12,8 +12,9 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    gap: 32px;
     .progress-bar{
-        position: relative;
+        // position: relative;
         left: 15%;
         border: 2px solid black;
         padding: 10px;
@@ -55,3 +56,23 @@
   right: 15px;
   top: 15px;
   }
+
+
+
+
+  // .save-button-container{
+  //   position: fixed;
+  //   right: 8%;
+  //   bottom: 8%;
+  // }
+  .save-button-container{
+    display: flex !important;
+    gap: 30px !important;
+    // position: absolute;
+    // right: 254px;
+    button{
+    background: black;
+    color: white;
+    }
+}
+

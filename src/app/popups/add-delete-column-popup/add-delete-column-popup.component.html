@@ -1,0 +1,19 @@
+<div class="openAddorDeletePopup">
+<h2 mat-dialog-title>Manage Columns</h2>
+<div mat-dialog-content [formGroup]="columnsForm">
+  <div *ngFor="let key of columnKeys; let i = index" class="column-row">
+    <mat-form-field>
+      <input matInput [formControlName]="key" placeholder="Column {{ i + 1 }}" />
+    </mat-form-field>
+    <button class="danger" mat-raised-button (click)="deleteColumn(key)">
+        del
+     </button>
+
+  </div>
+  <button mat-stroked-button color="primary" (click)="addColumn()">Add Column</button>
+</div>
+<div class="buttons" mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-raised-button color="primary" (click)="saveColumns()">Save</button>
+</div>
+</div>

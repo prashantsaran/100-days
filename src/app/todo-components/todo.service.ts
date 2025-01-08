@@ -41,7 +41,14 @@ export class TodoService {
         this.updateLocalCache(firebaseData);
       } else {
         console.log('Initializing new grid data...');
-        this.tasks= this.generateDefaultData();
+        this.tasks= this.generateDefaultData( [
+          'day',
+          'books',
+          'skills',
+          'meditate',
+          'workout',
+          'completed',
+        ]);
         this.updateLocalCache(this.tasks);
       }
     } catch (error) {
@@ -53,21 +60,40 @@ export class TodoService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
   }
 
-     generateDefaultData(): PeriodicElement[] {
-        return Array.from({ length: 100 }, (_, index) => ({
-          day: `Day ${index + 1}`,
-          dayNumber: index + 1,
-          books: false,
-          skills: false,
-          meditate: false,
-          workout: false,
-          completed: this.updateAndGetCompletedPercentage(
-            { books: false, skills: false, meditate: false, workout: false },
-            false
-          ),
-          isCompleted: false,
-        }));
-      }
+  generateDefaultData(columns: string[]): PeriodicElement[] {
+    const defaultColumns = ['day', 'completed', 'isCompleted'];
+    const allColumns = Array.from(new Set([...defaultColumns, ...columns]));
+  
+    return Array.from({ length: 100 }, (_, index) => {
+      const row: any = {
+        day: `Day ${index + 1}`,
+        dayNumber: index + 1,
+        completed: 0, // Default completion percentage
+        isCompleted: false, // Default completion status
+      };
+  
+      // Add dynamic columns with default values
+      allColumns.forEach((column) => {
+        if (!defaultColumns.includes(column)) {
+          row[column] = false; // Default value for new columns
+        }
+      });
+  
+      // Calculate completed percentage based on dynamic columns
+      row.completed = this.updateAndGetCompletedPercentage(
+        allColumns.reduce((acc: any, column) => {
+          if (typeof row[column] === 'boolean') {
+            acc[column] = row[column];
+          }
+          return acc;
+        }, {}),
+        false
+      );
+  
+      return row;
+    });
+  }
+  
 
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
         const totalFields = ['books', 'skills', 'meditate', 'workout'];

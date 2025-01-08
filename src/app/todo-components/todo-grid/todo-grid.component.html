@@ -1,7 +1,7 @@
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-  <ng-container matColumnDef="day">
+  <!-- <ng-container matColumnDef="day">
     <th mat-header-cell *matHeaderCellDef> Day </th>
     <td mat-cell *matCellDef="let element">
       {{ element.day }}
@@ -55,6 +55,21 @@
       
       {{ element.completed }}
     </td>
+  </ng-container> -->
+
+  <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+    <td mat-cell *matCellDef="let element">
+      @if( element[column] == true ||  element[column] ==  false){
+        <todo-checkbox
+        [checked]="element[column]"
+        (stateChange)="onCheckboxChange(element, column, $event)">
+      </todo-checkbox>
+      }
+      @else{
+          {{ element[column] }}
+      }
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -62,7 +77,9 @@
 </table>
 <mat-paginator [length]="dataSource.data.length" [pageSize]="7" [pageSizeOptions]="[7, 10, 25]" showFirstLastButtons></mat-paginator>
 
-<div class="save-button-container">
+<!-- <div class="save-button-container">
   <button mat-raised-button (click)="openResetDialog()" >Reset</button>
   <button mat-raised-button  (click)="saveGridData()">Save Changes</button>
-</div>
+  <button mat-raised-button  (click)="openAddorDeletePopup()">Add or Delete Columns</button>
+
+</div> -->

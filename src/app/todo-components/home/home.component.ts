@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TodoGridComponent } from '../todo-grid/todo-grid.component';
@@ -15,7 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+
+
   title = '100-days';
+  @ViewChild(TodoGridComponent) todoGrid!: TodoGridComponent;
 
   // Tasks data received from todo-grid
   tasks: any[] = [];
@@ -36,6 +39,17 @@ export class HomeComponent implements OnInit {
    
   }
 
+    saveGridData() {
+    this.todoGrid.saveGridData();
+    }
+    openResetDialog() {
+      this.todoGrid.openResetDialog();
+    }
+
+    openAddorDeletePopup() {
+      this.todoGrid.openAddorDeletePopup();
+      }
+
   async fillData(){
     this.tasks = await this.todoService.getData()
   }
@@ -52,22 +66,19 @@ export class HomeComponent implements OnInit {
 
   calculateProgress() {
     if (!this.tasks || this.tasks.length === 0) {
-      return; // Avoid calculations if tasks are not initialized
+      return; 
     }
 
     const currentWeekTasks = this.getSegmentedTasks(7);
     this.weekCompletion = this.calculatePercentage(7);
 
-    // Monthly Progress (last 30 days)
     const currentMonthTasks = this.getSegmentedTasks(30);
     this.monthCompletion = this.calculatePercentage(30);
 
-    // Overall Progress (all 100 days)
     this.overallCompletion = this.calculatePercentage(100);
   }
 
 getSegmentedTasks(days: number): any[] {
-  // Get the last segment of 'days' from the tasks array
   return this.tasks.slice(-days);
 }
 

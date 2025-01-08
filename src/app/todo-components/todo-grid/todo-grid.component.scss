@@ -9,7 +9,7 @@
   
 .save-button-container{
   position: fixed;
-  right: 16%;
+  right: 8%;
   bottom: 8%;
 }
 // ::ng-deep .cdk-overlay-pane.mat-mdc-select-panel-above {
@@ -20,7 +20,7 @@
     display: flex !important;
     gap: 30px !important;
     position: absolute;
-    right: 254px;
+    // right: 254px;
     button{
     background: black;
     color: white;
