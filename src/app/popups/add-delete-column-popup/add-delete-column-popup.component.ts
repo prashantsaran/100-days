@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { TodoService } from '../../todo-components/todo.service';
 
 
 @Component({
@@ -24,7 +25,8 @@ export class AddDeleteColumnPopupComponent {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddDeleteColumnPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: string[]
+    @Inject(MAT_DIALOG_DATA) public data: string[],
+    private todoService: TodoService
   ) {
     // Initialize the form with existing columns
     this.columnsForm = this.fb.group({});
@@ -39,7 +41,7 @@ export class AddDeleteColumnPopupComponent {
   }
 
   addColumn(): void {
-    const key = `column${this.columnKeys.length}`;
+    const key = `column${this.columnKeys.length+1}`;
     this.columnKeys.push(key);
     this.columnsForm.addControl(key, this.fb.control('', Validators.required));
   }
@@ -52,7 +54,12 @@ export class AddDeleteColumnPopupComponent {
   saveColumns(): void {
     if (this.columnsForm.valid) {
       const updatedColumns = this.columnKeys.map((key) => this.columnsForm.get(key)?.value);
+      this.todoService.updatedColumns=updatedColumns;
       this.dialogRef.close(updatedColumns);
     }
   }
+  closePopup(){
+    this.dialogRef.close(true);
+  }
+
 }

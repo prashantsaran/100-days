@@ -12,7 +12,8 @@ export class TodoService {
   
   tasks: any[] = [];
   private readonly STORAGE_KEY = 'todoGridData';
-  private readonly FIRESTORE_COLLECTION = 'todoGrid'
+  private readonly FIRESTORE_COLLECTION = 'todoGrid';
+  public updatedColumns :string[]=['books', 'skills', 'meditate', 'workout'];
   constructor(private firestore: Firestore) {}
 
 
@@ -24,22 +25,25 @@ export class TodoService {
       return firebaseData;
 }
 
-  async initializeGridData(): Promise<void> {
+  async initializeGridData(gridColumns ?:string[]): Promise<void> {
     try {
       const cachedData = localStorage.getItem(this.STORAGE_KEY);
       const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
       const orderedQuery = query(todoCollection, orderBy('dayNumber'));
       const querySnapshot = await getDocs(orderedQuery);
 
-      if (cachedData) {
-        console.log('Loading data from local cache...');
+      if (cachedData && !gridColumns) {
+        console.log('Loading data from local cache...',cachedData);
         this.tasks = JSON.parse(cachedData);
-      } else if (!querySnapshot.empty) {
+      } else if (!querySnapshot.empty && !gridColumns) {
         console.log('Loading data from Firestore...');
         const firebaseData = querySnapshot.docs.map((doc) => doc.data() as PeriodicElement);
         this.tasks = firebaseData;
         this.updateLocalCache(firebaseData);
-      } else {
+      } else if(gridColumns){
+        this.tasks= this.generateDefaultData(gridColumns);
+      }
+      else {
         console.log('Initializing new grid data...');
         this.tasks= this.generateDefaultData( [
           'day',
@@ -96,9 +100,9 @@ export class TodoService {
   
 
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
-        const totalFields = ['books', 'skills', 'meditate', 'workout'];
-        const completedCount = totalFields.filter((field) => row[field] === true).length;
-        const percentage = (completedCount / totalFields.length) * 100;
+        // const totalFields = ['books', 'skills', 'meditate', 'workout',];
+        const completedCount = this.updatedColumns.filter((field) => row[field] === true).length;
+        const percentage = (completedCount / this.updatedColumns.length) * 100;
     
         if (updateRow) {
           row.completed = `${percentage}%`;

@@ -32,7 +32,7 @@ import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-po
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
-export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit{
+export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,AfterViewInit{
 
 
   @Input()
@@ -53,8 +53,11 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit{
 
   private readonly STORAGE_KEY = 'todoGridData';
   private readonly FIRESTORE_COLLECTION = 'todoGrid';
+  totalFields: string[]=['books', 'skills', 'meditate', 'workout'];
 
-  constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {}
+  constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {
+    this.tasks=this.todoService.tasks
+  }
 
 
 
@@ -65,8 +68,12 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit{
     }
   }
 
+  
+
   ngAfterViewInit(): void {
+    this.dataSource.data= this.todoService.tasks;
     this.dataSource.paginator = this.paginator;
+
   }
   ngOnInit(){
 this.todoService.initializeGridData();
@@ -75,7 +82,17 @@ this.todoService.initializeGridData();
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
-    row.isCompleted = row.books && row.skills && row.meditate && row.workout;
+    let flag=false;
+    row.isCompleted=true;
+    this.totalFields.forEach((x) => {
+      if (!row[x]) {
+        row.isCompleted = false;
+        return;
+      }
+      
+    });
+    
+    // row.isCompleted = row.books && row.skills && row.meditate && row.workout;
 
     this.todoService.updateAndGetCompletedPercentage(row);
     this.todoService.updateLocalCache(this.dataSource.data); 
@@ -88,10 +105,14 @@ this.todoService.initializeGridData();
       data: this.displayedColumns
     });
 
-    dialogRef.afterClosed().subscribe((result: string[] | undefined) => {
+    dialogRef.afterClosed().subscribe((result: string[] |boolean |  undefined) => {
+      if(result == true){
+        return;
+      }
       if (result) {
-        this.displayedColumns = result; 
-        this.todoService.initializeGridData();
+        this.totalFields=result;
+        this.displayedColumns =[ 'day',...result,'completed']; 
+        this.todoService.initializeGridData(this.displayedColumns);
         this.dataSource.data=this.todoService.generateDefaultData(this.displayedColumns);
       }
     });
@@ -103,8 +124,8 @@ this.todoService.initializeGridData();
 
   updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): number {
     const totalFields = ['books', 'skills', 'meditate', 'workout'];
-    const completedCount = totalFields.filter((field) => row[field] === true).length;
-    const percentage = (completedCount / totalFields.length) * 100;
+    const completedCount = this.totalFields.filter((field) => row[field] === true).length;
+    const percentage = (completedCount / this.totalFields.length) * 100;
 
     if (updateRow) {
       row.completed = percentage;
