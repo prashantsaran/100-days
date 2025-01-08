@@ -148,7 +148,11 @@ this.todoService.initializeGridData();
   openResetDialog(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
-      data: { message: 'Are you sure you want to reset all data?' },
+      data: { message: 'Are you sure you want to reset all data?' ,
+        confirm : 'Reset',
+        cancel : 'Cancel',
+      },
+   
     });
 
     dialogRef.afterClosed().subscribe((result) => {

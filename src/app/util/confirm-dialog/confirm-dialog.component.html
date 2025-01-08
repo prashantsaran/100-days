@@ -4,6 +4,6 @@
 </div>
 <div mat-dialog-actions class="dialog-btn">
     
-  <button  mat-raised-button (click)="onCancel()">Cancel</button>
-  <button  mat-raised-button color="warn" (click)="onConfirm()">Reset</button>
+  <button  mat-raised-button (click)="onCancel()">{{data.cancel}}</button>
+  <button  mat-raised-button color="warn" (click)="onConfirm()">{{data.confirm}}</button>
 </div>

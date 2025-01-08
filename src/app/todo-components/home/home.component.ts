@@ -6,6 +6,8 @@ import { RouterOutlet } from '@angular/router';
 import { TodoService } from '../todo.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { MatButtonModule } from '@angular/material/button';
+import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
@@ -27,7 +29,7 @@ export class HomeComponent implements OnInit {
   weekCompletion = 0;
   monthCompletion = 0;
   overallCompletion = 0;
-  constructor(private todoService: TodoService,private authService : AuthenticationService) {}
+  constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog) {}
 
    ngOnInit() {
     this.todoService.initializeGridData();
@@ -60,7 +62,19 @@ export class HomeComponent implements OnInit {
   }
 
   logOut(){
-    this.authService.signOut();
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          width: '300px',
+          data: { message: 'Are you sure you want to Logout?' ,
+            confirm : 'Logout',
+            cancel : 'Cancel'
+          },
+        });
+    
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.authService.signOut();
+          }
+        });
     
       }
 

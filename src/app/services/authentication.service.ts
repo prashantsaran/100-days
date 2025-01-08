@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { signInWithPopup,GoogleAuthProvider,getAuth } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Router } from '@angular/router';
 import { catchError, from, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { catchError, from, Observable, throwError } from 'rxjs';
 })
 export class AuthenticationService {
 
-  constructor(private auth: AngularFireAuth) {
+  constructor(private auth: AngularFireAuth, private router: Router) {
     this.isUserLoggedIn = localStorage.getItem('isUserLoggedIn') === 'true';
    }
 
@@ -60,6 +61,7 @@ export class AuthenticationService {
   signOut(): void {
     this.isUserLoggedIn = false;
     localStorage.removeItem('isUserLoggedIn');
+    this.router.navigate(['/login']);
   }
 
   signInWithGoogle(): Observable<any> {

@@ -236,9 +236,7 @@ body.dark-mode {
 /* Add additional styling for the clouds, stars, and moon as needed. */
 
 
-.mat-mdc-form-field{
-  max-width: fit-content;
-}
+
 
 
 
@@ -252,6 +250,9 @@ body.dark-mode {
   .mat-mdc-form-field-flex{
   max-height: 30px; 
  
+}
+.mat-mdc-form-field{
+  max-width: fit-content;
 }}
 
 .material-symbols-outlined {
