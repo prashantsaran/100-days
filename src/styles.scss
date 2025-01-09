@@ -1,7 +1,9 @@
 @use '@angular/material' as mat;
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-
+html{
+  --mdc-checkbox-selected-checkmark-color: white !important;
+}
 
 .mdc-snackbar {
     right: 0 !important;
