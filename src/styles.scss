@@ -1,11 +1,6 @@
 @use '@angular/material' as mat;
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-// Import Angular Material Theming
-
-
-// Define the Light Theme
-// Define the Light Theme
 
 
 .mdc-snackbar {
@@ -198,6 +193,9 @@ body.dark-mode {
 
 .theme-switch__checkbox {
   display: none;
+}
+.mdc-checkbox--selected{
+  color: white !important;
 }
 
 
