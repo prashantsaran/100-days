@@ -78,8 +78,14 @@ export class TodoService {
       }
 
       const firstTask=this.tasks[0];
-      this._displayedColumns = Object.keys(firstTask).filter(key => key !== 'dayNumber' && key !== 'isCompleted');
-      
+      this._displayedColumns = [
+        'day',
+        ...Object.keys(firstTask).filter(
+          (key) => key !== 'dayNumber' && key !== 'isCompleted' && key !== 'day' && key !== 'completed'
+        ),
+        'completed',
+      ];
+            
     } catch (error) {
       console.error('Error initializing grid data:', error);
     }
@@ -97,8 +103,8 @@ export class TodoService {
       const row: any = {
         day: `Day ${index + 1}`,
         dayNumber: index + 1,
-        completed: 0, // Default completion percentage
-        isCompleted: false, // Default completion status
+        completed: 0,
+        isCompleted: false, 
       };
   
       // Add dynamic columns with default values
