@@ -10,11 +10,32 @@ import { PeriodicElement } from './todo-grid/todo-grid.component';
 export class TodoService {
   
   
-  tasks: any[] = [];
+  private _tasks: any[] = [];
   private readonly STORAGE_KEY = 'todoGridData';
   private readonly FIRESTORE_COLLECTION = 'todoGrid';
   public updatedColumns :string[]=['books', 'skills', 'meditate', 'workout'];
   constructor(private firestore: Firestore) {}
+
+  set tasks(value: any[]){
+    this._tasks = value;
+  }
+  get tasks(){
+    return this._tasks;
+  }
+
+  _displayedColumns: string[]=[ 'day',
+    'books',
+    'skills',
+    'meditate',
+    'workout',
+    'completed',];
+
+    set displayedColumns(value :string[]){
+      this.displayedColumns = value;
+    }
+    get displayedColumns(){
+      return this._displayedColumns;
+    }
 
 
   async getData() {
@@ -55,6 +76,10 @@ export class TodoService {
         ]);
         this.updateLocalCache(this.tasks);
       }
+
+      const firstTask=this.tasks[0];
+      this._displayedColumns = Object.keys(firstTask).filter(key => key !== 'dayNumber' && key !== 'isCompleted');
+      
     } catch (error) {
       console.error('Error initializing grid data:', error);
     }
@@ -102,8 +127,9 @@ export class TodoService {
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
         // const totalFields = ['books', 'skills', 'meditate', 'workout',];
         const completedCount = this.updatedColumns.filter((field) => row[field] === true).length;
-        const percentage = (completedCount / this.updatedColumns.length) * 100;
-    
+        const percentage = Math.round((completedCount / this.updatedColumns.length) * 100);
+
+      
         if (updateRow) {
           row.completed = `${percentage}%`;
         }

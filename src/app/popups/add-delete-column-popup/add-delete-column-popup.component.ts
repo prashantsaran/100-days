@@ -39,9 +39,9 @@ export class AddDeleteColumnPopupComponent {
     
     });
   }
-
+  counter=0;
   addColumn(): void {
-    const key = `column${this.columnKeys.length+1}`;
+    const key = `column${this.counter++}`;
     this.columnKeys.push(key);
     this.columnsForm.addControl(key, this.fb.control('', Validators.required));
   }

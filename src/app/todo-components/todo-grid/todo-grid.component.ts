@@ -38,6 +38,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
   @Input()
   tasks :any[] = [];
 
+  @Input()
   displayedColumns: string[] = [
     'day',
     'books',
@@ -51,12 +52,12 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
   @Output() tasksUpdated = new EventEmitter<any[]>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  private readonly STORAGE_KEY = 'todoGridData';
+  // private readonly STORAGE_KEY = 'todoGridData';
   private readonly FIRESTORE_COLLECTION = 'todoGrid';
   totalFields: string[]=['books', 'skills', 'meditate', 'workout'];
 
   constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {
-    this.tasks=this.todoService.tasks
+    this.tasks=this.todoService.tasks;
   }
 
 
@@ -82,7 +83,7 @@ this.todoService.initializeGridData();
 
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
-    let flag=false;
+    // let flag=false;
     row.isCompleted=true;
     this.totalFields.forEach((x) => {
       if (!row[x]) {
@@ -122,17 +123,7 @@ this.todoService.initializeGridData();
     this.tasksUpdated.emit(this.dataSource.data);
   }
 
-  updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): number {
-    const totalFields = ['books', 'skills', 'meditate', 'workout'];
-    const completedCount = this.totalFields.filter((field) => row[field] === true).length;
-    const percentage = (completedCount / this.totalFields.length) * 100;
 
-    if (updateRow) {
-      row.completed = percentage;
-    }
-
-    return percentage;
-  }
 
   saveGridData(): void {
 

@@ -60,13 +60,13 @@
   <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
     <th mat-header-cell *matHeaderCellDef> {{column}} </th>
     <td mat-cell *matCellDef="let element">
-      @if( element[column] == true ||  element[column] ==  false){
+      @if( element[column] == true ||  element[column] ==  false && column!='isCompleted'){
         <todo-checkbox
         [checked]="element[column]"
         (stateChange)="onCheckboxChange(element, column, $event)">
       </todo-checkbox>
       }
-      @else{
+      @else if(column != 'dayNumber' && column != 'isCompleted'){
           {{ element[column] }}
       }
     </td>

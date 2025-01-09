@@ -23,20 +23,39 @@ export class HomeComponent implements OnInit {
   @ViewChild(TodoGridComponent) todoGrid!: TodoGridComponent;
 
   // Tasks data received from todo-grid
-  tasks: any[] = [];
+  // tasks: any[] = [];
+
+
 
   // Progress Percentages
   weekCompletion = 0;
   monthCompletion = 0;
   overallCompletion = 0;
-  constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog) {}
+  _displayedColumns:string[]=[];
 
+  constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog) {
+    // this._displayedColumns= this.todoService._displayedColumns;
+  }
+
+
+  get displayedColumns(){
+    return this.todoService.displayedColumns;
+  }
+  
+  get tasks(){
+    return this.todoService.tasks;
+  }
+
+  set tasks(value:any[]){
+    this.todoService.tasks = value;
+  }
    ngOnInit() {
     this.todoService.initializeGridData();
     
     setTimeout(()=>{
       this.tasks=this.todoService.tasks;
       this.calculateProgress();
+
     },500)
    
   }

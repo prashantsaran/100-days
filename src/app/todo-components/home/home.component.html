@@ -7,7 +7,7 @@
    
   
   <div class="items">
-    <todo-grid [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
+    <todo-grid  [displayedColumns]="displayedColumns" [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
     <div class="right-item">
       <div class="save-button-container">
         <button mat-raised-button  (click)="openAddorDeletePopup()">Add/Delete Columns</button>
