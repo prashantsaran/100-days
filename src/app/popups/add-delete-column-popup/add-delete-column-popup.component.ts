@@ -43,9 +43,9 @@ export class AddDeleteColumnPopupComponent {
     this.columns.splice(index, 1); // Remove column name
 
     // Remove the column from all tasks
-    this.todoService.tasks.forEach((task) => {
-      delete task[columnToDelete];
-    });
+    // this.todoService.tasks.forEach((task) => {
+    //   delete task[columnToDelete];
+    // });
   }
 
   saveColumns(): void {
