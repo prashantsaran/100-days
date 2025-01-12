@@ -11,13 +11,9 @@
           placeholder="Column {{ i + 1 }}"
         />
       </mat-form-field>
-      <button
-        class="danger"
-        mat-raised-button
-        color="warn"
-        (click)="deleteColumn(i)"
-      >
-        del
+      <button  class="delete-btn"
+      (click)="deleteColumn(i)" >
+      <mat-icon matTooltip ="delete"  >delete</mat-icon>
       </button>
     </div>
     }
@@ -28,7 +24,7 @@
     </button>
   </div>
   <div class="buttons" mat-dialog-actions>
-    <button mat-button mat-dialog-close (click)="closePopup()">Close</button>
+    <button mat-raised-button color="warn"  (click)="closePopup()">Close</button>
     <button mat-raised-button color="primary" (click)="saveColumns()">Save</button>
   </div>
 </div>
