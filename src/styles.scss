@@ -227,13 +227,13 @@ body.dark-mode {
   max-width: fit-content;
 }}
 
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
-}
+// .material-symbols-outlined {
+//   font-variation-settings:
+//   'FILL' 0,
+//   'wght' 400,
+//   'GRAD' 0,
+//   'opsz' 24
+// }
 
 // todo-grid{
   
@@ -256,7 +256,7 @@ body.dark-mode {
 
 
 
-
+.spinner-container{
 
 .mdc-circular-progress__determinate-circle-graphic, .mdc-circular-progress__indeterminate-circle-graphic {
   // fill: black;
@@ -265,3 +265,4 @@ body.dark-mode {
 }
   
 .mat-mdc-progress-spinner { --mdc-circular-progress-active-indicator-color: black !important; }
+}
