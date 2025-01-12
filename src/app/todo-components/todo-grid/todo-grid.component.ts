@@ -112,9 +112,9 @@ this.todoService.initializeGridData();
       }
       if (result) {
         this.totalFields=result;
-        this.displayedColumns =[ 'day',...result,'completed']; 
-        this.todoService.initializeGridData(this.displayedColumns);
-        this.dataSource.data=this.todoService.generateDefaultData(this.displayedColumns);
+        this.todoService._displayedColumns =[ 'day',...result,'completed']; 
+        // this.todoService.initializeGridData(this.displayedColumns);
+        // this.dataSource.data=this.todoService.tasks;
       }
     });
     

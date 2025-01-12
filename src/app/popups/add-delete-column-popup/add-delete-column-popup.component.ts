@@ -1,66 +1,70 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {MatIconModule} from '@angular/material/icon';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { TodoService } from '../../todo-components/todo.service';
-
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-add-delete-column-popup',
   standalone: true,
-  imports: [MatInputModule,MatFormFieldModule, CommonModule,FormsModule,MatIconModule,ReactiveFormsModule,MatButtonModule],
-  
+  imports: [
+    // Angular Material imports and common modules
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+  ],
   templateUrl: './add-delete-column-popup.component.html',
-  styleUrl: './add-delete-column-popup.component.scss'
+  styleUrls: ['./add-delete-column-popup.component.scss'],
 })
 export class AddDeleteColumnPopupComponent {
-  columnsForm: FormGroup;
-  columnKeys: string[] = [];
+  columns: string[] = []; // Array to manage column names
 
   constructor(
-    private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddDeleteColumnPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string[],
     private todoService: TodoService
   ) {
-    // Initialize the form with existing columns
-    this.columnsForm = this.fb.group({});
-    this.data.forEach((column, index) => {
-      if(column !== 'day' && column !== 'completed'   ){
-        const key = `column${index}`;
-        this.columnKeys.push(key);
-        this.columnsForm.addControl(key, this.fb.control(column, Validators.required));
-      }
-    
-    });
-  }
-  counter=100;
-  addColumn(): void {
-    ++this.counter;
-    const key = `column${this.counter}`;
-    this.columnKeys.push(key);
-    this.columnsForm.addControl(key, this.fb.control('', Validators.required));
+    // Initialize columns from existing task keys
+    const sampleTask = this.todoService.tasks[0] || {};
+    this.columns = Object.keys(sampleTask).filter((key) => key !== 'day' && key !== 'dayNumber' && key !== 'completed' && key !== 'isCompleted');
   }
 
-  deleteColumn(key: string): void {
-    this.columnKeys = this.columnKeys.filter((k) => k !== key);
-    this.columnsForm.removeControl(key);
+  addColumn(): void {
+    this.columns.push(''); // Add a blank column for editing
+  }
+
+  deleteColumn(index: number): void {
+    const columnToDelete = this.columns[index];
+    this.columns.splice(index, 1); // Remove column name
+
+    // Remove the column from all tasks
+    this.todoService.tasks.forEach((task) => {
+      delete task[columnToDelete];
+    });
   }
 
   saveColumns(): void {
-    if (this.columnsForm.valid) {
-      const updatedColumns = this.columnKeys.map((key) => this.columnsForm.get(key)?.value);
-      this.todoService.updatedColumns=updatedColumns;
-      this.dialogRef.close(updatedColumns);
-    }
-  }
-  closePopup(){
-    this.dialogRef.close(true);
+    // Filter out empty or invalid column names
+    this.columns = this.columns.filter((column) => column.trim() !== '');
+
+    // Add new columns to all tasks
+    this.todoService.tasks.forEach((task) => {
+      this.columns.forEach((column) => {
+        if (!(column in task)) {
+          task[column] = false; // Initialize new columns with default value
+        }
+      });
+    });
+
+    this.dialogRef.close(this.columns); // Close dialog with updated columns
   }
 
+  closePopup(): void {
+    this.dialogRef.close(); // Close dialog without saving
+  }
 }

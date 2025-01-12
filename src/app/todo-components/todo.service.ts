@@ -62,8 +62,7 @@ export class TodoService {
         this.tasks = firebaseData;
         this.updateLocalCache(firebaseData);
       } else if(gridColumns){
-        this.tasks= this.generateDefaultData(gridColumns);
-      }
+    }
       else {
         console.log('Initializing new grid data...');
         this.tasks= this.generateDefaultData( [
@@ -131,14 +130,14 @@ export class TodoService {
   
 
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
-        // const totalFields = ['books', 'skills', 'meditate', 'workout',];
-        const completedCount = this.updatedColumns.filter((field) => row[field] === true).length;
-        const percentage = Math.round((completedCount / this.updatedColumns.length) * 100);
+        const totalFields = this.displayedColumns.filter(x=> x!='completed' && x!='day');
+        const completedCount = totalFields.filter((field) => row[field] === true).length;
+        const percentage = Math.round((completedCount / totalFields.length) * 100);
 
       
         if (updateRow) {
           row.completed = `${percentage}%`;
-        }
+        } 
     
         return `${percentage}%`;
       }
