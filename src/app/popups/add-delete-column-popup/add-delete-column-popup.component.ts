@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-delete-column-popup',
@@ -17,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSnackBarModule
   ],
   templateUrl: './add-delete-column-popup.component.html',
   styleUrls: ['./add-delete-column-popup.component.scss'],
@@ -27,7 +29,8 @@ export class AddDeleteColumnPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AddDeleteColumnPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string[],
-    private todoService: TodoService
+    private todoService: TodoService,
+    private snackBar: MatSnackBar,
   ) {
     // Initialize columns from existing task keys
     const sampleTask = this.todoService.tasks[0] || {};
@@ -39,13 +42,20 @@ export class AddDeleteColumnPopupComponent {
   }
 
   deleteColumn(index: number): void {
+    if(this.columns.length<2){
+      this.snackBar.open('There must be at least one column', 'OK', {
+        duration: 5000,
+      });
+      return;
+    }
     const columnToDelete = this.columns[index];
+
     this.columns.splice(index, 1); // Remove column name
 
     // Remove the column from all tasks
-    // this.todoService.tasks.forEach((task) => {
-    //   delete task[columnToDelete];
-    // });
+    this.todoService.tasks.forEach((task) => {
+      delete task[columnToDelete];
+    });
   }
 
   saveColumns(): void {
