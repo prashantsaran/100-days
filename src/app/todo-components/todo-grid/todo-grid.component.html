@@ -66,8 +66,23 @@
         (stateChange)="onCheckboxChange(element, column, $event)">
       </todo-checkbox>
       }
+      @else if (column=='completed') {
+        <mat-card class="card">
+          <mat-card-content class="spinner-container">
+              <!-- <h2 class="example-h2">Result</h2> -->
+      
+              <!-- <img src='https://i.sstatic.net/aNUGr.png' alt='background'/> -->
+        <mat-progress-spinner diameter="40" class="custom-spinner" mode="determinate" [value]="getNumericValue(element[column])"></mat-progress-spinner>
+        <div class="spinner-value">{{ element[column] }}</div>
+      </mat-card-content>
+    </mat-card>
+      }
       @else if(column != 'dayNumber' && column != 'isCompleted'){
+        <mat-card class="days-card mat-elevation-z4">
+          <mat-card-content >
           {{ element[column] }}
+        </mat-card-content>
+      </mat-card>
       }
     </td>
   </ng-container>
@@ -75,7 +90,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-<mat-paginator [length]="dataSource.data.length" [pageSize]="7" [pageSizeOptions]="[7, 10, 25]" showFirstLastButtons></mat-paginator>
+<mat-paginator   class="custom-spinner" [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 7, 25]" showFirstLastButtons></mat-paginator>
 
 <!-- <div class="save-button-container">
   <button mat-raised-button (click)="openResetDialog()" >Reset</button>

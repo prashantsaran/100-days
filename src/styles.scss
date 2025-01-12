@@ -234,3 +234,34 @@ body.dark-mode {
   'GRAD' 0,
   'opsz' 24
 }
+
+// todo-grid{
+  
+//   max-height: 520px;
+//   overflow-y: scroll;
+// }
+
+.mat-mdc-card-content:last-child  {
+  padding-bottom: 8px !important;
+}
+
+.mat-mdc-card-content:first-child  {
+  padding-top: 8px !important;
+}
+
+.mdc-circular-progress__determinate-container{
+  left: 5px !important;
+}
+
+
+
+
+
+
+.mdc-circular-progress__determinate-circle-graphic, .mdc-circular-progress__indeterminate-circle-graphic {
+  // fill: black;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+  
+.mat-mdc-progress-spinner { --mdc-circular-progress-active-indicator-color: black !important; }

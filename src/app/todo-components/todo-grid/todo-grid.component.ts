@@ -24,11 +24,12 @@ import { TodoCheckboxComponent } from '../todo-checkbox/todo-checkbox/todo-check
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-popup/add-delete-column-popup.component';
+import {MatCardModule} from '@angular/material/card';
 
 @Component({
   selector: 'todo-grid',
   standalone: true,
-  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule,CommonModule,MatProgressSpinnerModule],
+  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule,CommonModule,MatProgressSpinnerModule,MatCardModule],
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
@@ -67,6 +68,10 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
       this.dataSource.data = changes['tasks'].currentValue;
       this.dataSource.paginator = this.paginator;
     }
+  }
+  getNumericValue(value: string): number {
+    // Remove the '%' and convert to a number
+    return parseFloat(value.replace('%', ''));
   }
 
   
