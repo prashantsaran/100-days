@@ -26,11 +26,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-popup/add-delete-column-popup.component';
 import {MatCardModule} from '@angular/material/card';
 import { environment } from '../../../environments/environment';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'todo-grid',
   standalone: true,
-  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule,CommonModule,MatProgressSpinnerModule,MatCardModule],
+  imports: [MatTableModule, TodoCheckboxComponent, MatPaginatorModule,MatSnackBarModule,MatButtonModule,MatDialogModule,CommonModule,MatProgressSpinnerModule,MatCardModule,MatTooltipModule],
   templateUrl: './todo-grid.component.html',
   styleUrls: ['./todo-grid.component.scss'],
 })
@@ -104,6 +105,13 @@ this.todoService.initializeGridData();
     this.todoService.updateLocalCache(this.dataSource.data); 
     this.emitTaskData();
   }
+
+  getCompletedTooltip(row: any): string {
+    const totalFields = this.displayedColumns.filter(x=> x!='completed' && x!='day');
+    const completedCount = totalFields.filter((field) => row[field] === true).length;  
+    return `${completedCount} out of ${totalFields.length} task completed `
+  }
+  
 
   openAddorDeletePopup() {
     const dialogRef = this.dialog.open(AddDeleteColumnPopupComponent, {

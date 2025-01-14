@@ -70,7 +70,7 @@
         <mat-card class="card">
           <mat-card-content class="spinner-container">
            
-        <mat-progress-spinner diameter="42" class="custom-spinner" mode="determinate" [value]="getNumericValue(element[column])"></mat-progress-spinner>
+        <mat-progress-spinner diameter="42" class="custom-spinner" mode="determinate" [value]="getNumericValue(element[column])" [matTooltip]="getCompletedTooltip(element)"></mat-progress-spinner>
         <div class="spinner-value">{{ element[column] }}</div>
       </mat-card-content>
     </mat-card>
