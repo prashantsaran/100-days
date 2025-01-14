@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../environments/environment';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { provideHttpClient } from '@angular/common/http';
 
   export const appConfig: ApplicationConfig = {
     providers: [
@@ -16,6 +17,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
       provideFirebaseApp(() => initializeApp(firebaseConfig)),
       provideFirestore(() => getFirestore()),
       provideAuth(() => getAuth()), // Add Authentication provider
-      { provide: FIREBASE_OPTIONS, useValue: firebaseConfig }
+      { provide: FIREBASE_OPTIONS, useValue: firebaseConfig },
+      provideHttpClient()
     ]
   };

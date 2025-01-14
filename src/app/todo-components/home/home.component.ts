@@ -8,11 +8,13 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmDialogComponent } from '../../util/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule],
+  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule,MatIconModule,CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -21,6 +23,8 @@ export class HomeComponent implements OnInit {
 
   title = '100-days';
   @ViewChild(TodoGridComponent) todoGrid!: TodoGridComponent;
+
+  quote:string='Nothing works unless you do';
 
   // Tasks data received from todo-grid
   // tasks: any[] = [];
@@ -32,9 +36,10 @@ export class HomeComponent implements OnInit {
   monthCompletion = 0;
   overallCompletion = 0;
   _displayedColumns:string[]=[];
-
+  isRotating: boolean=false;
+  
   constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog) {
-    // this._displayedColumns= this.todoService._displayedColumns;
+    
   }
 
 
@@ -57,6 +62,7 @@ export class HomeComponent implements OnInit {
       this.calculateProgress();
 
     },500)
+    this.refreshQuotes();
    
   }
 
@@ -65,6 +71,18 @@ export class HomeComponent implements OnInit {
     }
     openResetDialog() {
       this.todoGrid.openResetDialog();
+    }
+
+    refreshQuotes(){
+      this.isRotating = true;
+      setTimeout(() => {
+        this.todoService.getRandomQuote().subscribe((data:any)=>{
+          this.quote=data.content;
+          this.isRotating = false;
+          
+        });
+      }, 500); 
+     
     }
 
     openAddorDeletePopup() {

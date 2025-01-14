@@ -25,6 +25,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-popup/add-delete-column-popup.component';
 import {MatCardModule} from '@angular/material/card';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'todo-grid',
@@ -45,7 +46,6 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
     'books',
     'skills',
     'meditate',
-    'workout',
     'completed',
   ];
 
@@ -54,8 +54,8 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // private readonly STORAGE_KEY = 'todoGridData';
-  private readonly FIRESTORE_COLLECTION = 'todoGrid';
-  totalFields: string[]=['books', 'skills', 'meditate', 'workout'];
+  // private readonly FIRESTORE_COLLECTION = 'todoGrid';
+  totalFields: string[]=['books', 'skills', 'meditate'];
 
   constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {
     this.tasks=this.todoService.tasks;
@@ -133,7 +133,7 @@ this.todoService.initializeGridData();
   saveGridData(): void {
 
   
-    const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
+    const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
   
     const batchPromises = this.dataSource.data.map((row) =>
       setDoc(doc(todoCollection, row.day), {
@@ -204,7 +204,6 @@ export interface PeriodicElement {
   skills: boolean;
   books: boolean;
   meditate: boolean;
-  workout: boolean;
   day: string;
   dayNumber: number;
   completed: string;

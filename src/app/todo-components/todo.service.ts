@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { collection, Firestore, getDocs, orderBy, query } from '@angular/fire/firestore';
 
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from '../../environments/environment';
 import { PeriodicElement } from './todo-grid/todo-grid.component';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +12,11 @@ export class TodoService {
   
   
   private _tasks: any[] = [];
-  private readonly STORAGE_KEY = 'todoGridData';
-  private readonly FIRESTORE_COLLECTION = 'todoGrid';
-  public updatedColumns :string[]=['books', 'skills', 'meditate', 'workout'];
-  constructor(private firestore: Firestore) {}
+  // private readonly STORAGE_KEY = 'todoGridData';
+  // private readonly FIRESTORE_COLLECTION = 'todoGrid';
+  public updatedColumns :string[]=['books', 'skills', 'meditate'];
+  constructor(private firestore: Firestore,private http: HttpClient) {
+  }
 
   set tasks(value: any[]){
     this._tasks = value;
@@ -27,7 +29,6 @@ export class TodoService {
     'books',
     'skills',
     'meditate',
-    'workout',
     'completed',];
 
     set displayedColumns(value :string[]){
@@ -39,7 +40,7 @@ export class TodoService {
 
 
   async getData() {
-      const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
+      const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
       const orderedQuery = query(todoCollection, orderBy('dayNumber'));
       const querySnapshot = await getDocs(orderedQuery);
       const firebaseData = querySnapshot.docs.map((doc) => doc.data() );
@@ -48,8 +49,8 @@ export class TodoService {
 
   async initializeGridData(gridColumns ?:string[]): Promise<void> {
     try {
-      const cachedData = localStorage.getItem(this.STORAGE_KEY);
-      const todoCollection = collection(this.firestore, this.FIRESTORE_COLLECTION);
+      const cachedData = localStorage.getItem(environment.STORAGE_KEY);
+      const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
       const orderedQuery = query(todoCollection, orderBy('dayNumber'));
       const querySnapshot = await getDocs(orderedQuery);
 
@@ -70,7 +71,6 @@ export class TodoService {
           'books',
           'skills',
           'meditate',
-          'workout',
           'completed',
         ]);
         this.updateLocalCache(this.tasks);
@@ -91,7 +91,7 @@ export class TodoService {
   }
 
    updateLocalCache(data: PeriodicElement[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(environment.STORAGE_KEY, JSON.stringify(data));
   }
 
   generateDefaultData(columns: string[]): PeriodicElement[] {
@@ -141,7 +141,11 @@ export class TodoService {
     
         return `${percentage}%`;
       }
+
+     
+  getRandomQuote() :Observable<any>{
+   {
+      return this.http.get(environment.quotsAPI);
     }
- 
-
-
+  }
+}

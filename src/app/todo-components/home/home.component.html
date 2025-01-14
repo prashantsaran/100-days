@@ -1,11 +1,15 @@
 
 <button mat-stroked-button color="primary"   class="logout-btn"  routerLink="/login" (click)="logOut()">Logout</button>
 <div class="container">
-    <div>
-    <h1>{{ title }}</h1>
+    <div class="title">
+    <h2>{{ title }}</h2>
     </div>
-   
-  
+    <div class="quote">
+      {{quote}}
+       <mat-icon  mat-raised-button [ngClass]="{ 'rotate': isRotating }"  (click)='refreshQuotes()' matTooltip ="delete"  >refresh</mat-icon>
+    </div>
+    
+    
   <div class="items">
     <todo-grid  [displayedColumns]="displayedColumns" [tasks]="tasks" (tasksUpdated)="onTasksUpdated($event)"></todo-grid>
     <div class="right-item">
