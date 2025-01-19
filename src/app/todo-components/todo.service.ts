@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class TodoService {
-  
+
   
   private _tasks: any[] = [];
   // private readonly STORAGE_KEY = 'todoGridData';
@@ -148,4 +148,8 @@ export class TodoService {
       return this.http.get(environment.quotsAPI);
     }
   }
+
+  clearCache() {
+    localStorage.removeItem(environment.STORAGE_KEY)  }
+      
 }

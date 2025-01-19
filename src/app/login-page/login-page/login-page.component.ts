@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import {  MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TodoService } from '../../todo-components/todo.service';
 
 @Component({
   selector: 'app-login-page',
@@ -29,7 +30,8 @@ export class LoginPageComponent implements OnInit {
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private todoService: TodoService
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +51,7 @@ export class LoginPageComponent implements OnInit {
       next: () => {
         this.isLoggingIn = false;
         this.authService.isUserLoggedIn = true;
+        this.todoService.clearCache();
         this.router.navigate(['home']);
       },
       error: (err) => {
