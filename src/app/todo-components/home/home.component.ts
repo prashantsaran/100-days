@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { exhaustMap, Subject, tap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -54,6 +55,9 @@ export class HomeComponent implements OnInit {
   set tasks(value:any[]){
     this.todoService.tasks = value;
   }
+
+  private refreshClick$ = new Subject<void>();
+
    ngOnInit() {
     this.todoService.initializeGridData();
     
@@ -63,6 +67,22 @@ export class HomeComponent implements OnInit {
 
     },500)
     this.refreshQuotes();
+    this.refreshClick$
+    .pipe(
+      tap(() => (this.isRotating = true)), 
+      exhaustMap(() =>
+        this.todoService.getRandomQuote().pipe(
+          tap({
+            next: (data: any) => {
+              this.quote = data.content;
+              this.isRotating = false;
+            },
+            error: () => (this.isRotating = false)
+          })
+        )
+      )
+    )
+    .subscribe();
    
   }
 
@@ -74,15 +94,7 @@ export class HomeComponent implements OnInit {
     }
 
     refreshQuotes(){
-      this.isRotating = true;
-      setTimeout(() => {
-        this.todoService.getRandomQuote().subscribe((data:any)=>{
-          this.quote=data.content;
-          this.isRotating = false;
-          
-        });
-      }, 500); 
-     
+      this.refreshClick$.next(); // Emit an event to trigger the API call
     }
 
     openAddorDeletePopup() {
