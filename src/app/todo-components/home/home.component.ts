@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterContentChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TodoGridComponent } from '../todo-grid/todo-grid.component';
@@ -19,7 +19,7 @@ import { exhaustMap, Subject, tap } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit , AfterContentChecked{
 
 
   title = '100-days';
@@ -43,6 +43,10 @@ export class HomeComponent implements OnInit {
     
   }
 
+  ngAfterContentChecked() {
+        this.calculateProgress();
+  }
+
 
   get displayedColumns(){
     return this.todoService.displayedColumns;
@@ -63,7 +67,6 @@ export class HomeComponent implements OnInit {
     
     setTimeout(()=>{
       this.tasks=this.todoService.tasks;
-      this.calculateProgress();
 
     },500)
     this.refreshQuotes();
