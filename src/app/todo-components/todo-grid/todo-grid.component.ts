@@ -90,14 +90,12 @@ this.todoService.initializeGridData();
   onCheckboxChange(row: any, field: string, checked: boolean): void {
     row[field] = checked;
     // let flag=false;
-    row.isCompleted=true;
-    this.totalFields.forEach((x) => {
-      if (!row[x]) {
-        row.isCompleted = false;
-        return;
-      }
-      
-    });
+    // row.isCompleted=true;
+    row.isCompleted = Object.keys(row)
+    .filter((key) => typeof row[key] === 'boolean' && key !== 'isCompleted') // Exclude 'isCompleted'
+    .every((key) => row[key]); // Check if all boolean fields are true
+  
+  
     
     // row.isCompleted = row.books && row.skills && row.meditate && row.workout;
 
