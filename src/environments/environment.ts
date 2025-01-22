@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from '@angular/fire/app';
+import {  getAnalytics } from 'firebase/analytics';
 export const environment = {
       STORAGE_KEY : 'todoGridData',
       FIRESTORE_COLLECTION : 'todoGrid',
