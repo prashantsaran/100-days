@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { collection, Firestore, getDocs, orderBy, query } from '@angular/fire/firestore';
 
 import { PeriodicElement } from './todo-grid/todo-grid.component';
@@ -24,18 +24,27 @@ export class TodoService {
   get tasks(){
     return this._tasks;
   }
+  x=signal('');
 
-  _displayedColumns: string[]=[ 'day',
+  _displayedColumns= signal([
+    'day',
     'books',
     'skills',
     'meditate',
-    'completed',];
+    'completed',
+  ])
+
+  // _displayedColumns: string[]=[ 'day',
+  //   'books',
+  //   'skills',
+  //   'meditate',
+  //   'completed',];
 
     set displayedColumns(value :string[]){
-      this.displayedColumns = value;
+      this._displayedColumns.set(value);
     }
     get displayedColumns(){
-      return this._displayedColumns;
+      return this._displayedColumns();
     }
 
 
@@ -77,7 +86,7 @@ export class TodoService {
       }
 
       const firstTask=this.tasks[0];
-      this._displayedColumns = [
+      this.displayedColumns = [
         'day',
         ...Object.keys(firstTask).filter(
           (key) => key !== 'dayNumber' && key !== 'isCompleted' && key !== 'day' && key !== 'completed'

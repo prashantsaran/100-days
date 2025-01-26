@@ -9,6 +9,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  InputSignal,
+  input,
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -38,17 +40,22 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,AfterViewInit{
 
 
-  @Input()
-  tasks :any[] = [];
 
-  @Input()
-  displayedColumns: string[] = [
+tasks: InputSignal<any[]> = input<any[]>([]);
+
+
+ 
+  displayedColumns: InputSignal<string[] >=input( [
     'day',
     'books',
     'skills',
     'meditate',
     'completed',
-  ];
+  ]);
+
+  get columns(){
+    return this.displayedColumns();
+  }
 
   dataSource = new MatTableDataSource<PeriodicElement>();
   @Output() tasksUpdated = new EventEmitter<any[]>();
@@ -59,7 +66,7 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
   totalFields: string[]=['books', 'skills', 'meditate'];
 
   constructor(private firestore: Firestore, private snackBar: MatSnackBar,private todoService:TodoService, private dialog: MatDialog) {
-    this.tasks=this.todoService.tasks;
+    // this.tasks=this.todoService.tasks;
   }
 
 
@@ -105,7 +112,7 @@ this.todoService.initializeGridData();
   }
 
   getCompletedTooltip(row: any): string {
-    const totalFields = this.displayedColumns.filter(x=> x!='completed' && x!='day');
+    const totalFields = this.columns.filter(x=> x!='completed' && x!='day');
     const completedCount = totalFields.filter((field) => row[field] === true).length;  
     return `${completedCount} out of ${totalFields.length} task completed `
   }
@@ -123,7 +130,7 @@ this.todoService.initializeGridData();
       }
       if (result) {
         this.totalFields=result;
-        this.todoService._displayedColumns =[ 'day',...result,'completed']; 
+        this.todoService.displayedColumns =[ 'day',...result,'completed']; 
         // this.todoService.initializeGridData(this.displayedColumns);
         // this.dataSource.data=this.todoService.tasks;
       }
@@ -187,7 +194,7 @@ this.todoService.initializeGridData();
 
   resetData(): void {
     // Reset the data to default
-    const defaultData = this.todoService.generateDefaultData(this.displayedColumns);
+    const defaultData = this.todoService.generateDefaultData(this.columns);
     this.dataSource.data = defaultData;
   
     this.saveGridData();
