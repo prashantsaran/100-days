@@ -76,7 +76,7 @@
     </mat-card>
       }
       @else if(column != 'dayNumber' && column != 'isCompleted'){
-        <mat-card [ngClass]="{'completed': element['isCompleted']==true}" class="days-card mat-elevation-z4">
+        <mat-card [ngClass]="{'completed': isCompletedrow(element)}" class="days-card mat-elevation-z4">
           <mat-card-content >
           {{ element[column] }}
         </mat-card-content>

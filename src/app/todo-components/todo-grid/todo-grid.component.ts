@@ -116,6 +116,12 @@ this.todoService.initializeGridData();
     const completedCount = totalFields.filter((field) => row[field] === true).length;  
     return `${completedCount} out of ${totalFields.length} task completed `
   }
+
+  isCompletedrow(row: any): boolean {
+    const totalFields = this.columns.filter(x=> x!='completed' && x!='day');
+    const completedCount = totalFields.filter((field) => row[field] === true).length;  
+    return totalFields.length === completedCount;
+  }
   
 
   openAddorDeletePopup() {
