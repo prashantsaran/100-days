@@ -97,11 +97,19 @@ export class HomeComponent implements OnInit , AfterContentChecked{
     }
 
   refreshQuotes() {
-    this.todoService.getRandomQuote().subscribe((quoteText: any) => {
-      const quote = this.extractQuote(quoteText);
+    this.todoService.getRandomQuote().subscribe((quoteText: string) => {
+    const quote = this.extractQuote(quoteText);
+    
+    // Count number of words
+    const wordCount = quote.trim().split(/\s+/).length;
 
+    if (wordCount > 12) {
+      this.refreshQuotes();
+    } else {
+      // Good length, show it
       this.quote = quote;
-    });
+    }
+  });
     // this.refreshClick$.next(); 
   }
   extractQuote(raw: string): string {
