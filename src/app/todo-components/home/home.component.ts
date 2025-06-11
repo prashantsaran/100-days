@@ -103,7 +103,7 @@ export class HomeComponent implements OnInit , AfterContentChecked{
     // Count number of words
     const wordCount = quote.trim().split(/\s+/).length;
 
-    if (wordCount > 12) {
+    if (wordCount > 15) {
       this.refreshQuotes();
     } else {
       // Good length, show it
