@@ -151,11 +151,8 @@ export class TodoService {
         return `${percentage}%`;
       }
 
-     
-  getRandomQuote() :Observable<any>{
-   {
-      return this.http.get(environment.quotsAPI);
-    }
+ getRandomQuote(): Observable<any> {
+  return this.http.get(environment.quotsAPI, { responseType: 'text' });
   }
 
   clearCache() {

@@ -3,7 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 export const environment = {
       STORAGE_KEY : 'todoGridData',
       FIRESTORE_COLLECTION : 'todoGrid',
-      quotsAPI:'https://api.quotable.io/random'
+      quotsAPI:'https://thequoteshub.com/api/'
     
 };
 // Import the functions you need from the SDKs you need

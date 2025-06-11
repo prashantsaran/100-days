@@ -96,9 +96,19 @@ export class HomeComponent implements OnInit , AfterContentChecked{
       this.todoGrid.openResetDialog();
     }
 
-    refreshQuotes(){
-      this.refreshClick$.next(); // Emit an event to trigger the API call
-    }
+  refreshQuotes() {
+    this.todoService.getRandomQuote().subscribe((quoteText: any) => {
+      const quote = this.extractQuote(quoteText);
+
+      this.quote = quote;
+    });
+    // this.refreshClick$.next(); 
+  }
+  extractQuote(raw: string): string {
+    // Extract text between 'Quote: ' and ' Author:'
+    const match = raw.match(/Quote:\s*(.*?)\s*Author:/);
+    return match ? match[1] : 'Quote not found';
+  }
 
     openAddorDeletePopup() {
       this.todoGrid.openAddorDeletePopup();
