@@ -159,8 +159,37 @@ export class HomeComponent implements OnInit , AfterContentChecked{
     const currentMonthTasks = this.getSegmentedTasks(30);
     this.monthCompletion = this.calculatePercentage(30);
 
-    this.overallCompletion = this.calculatePercentage(100);
+       this.overallCompletion = this.calculate100DaysProgress();
   }
+
+
+calculate100DaysProgress(): number {
+  if (!this.tasks || this.tasks.length === 0) {
+    return 0;
+  }
+
+  let totalBooleanProps = 0;
+  let trueProps = 0;
+
+for(const key in this.tasks[0]){
+  if(typeof this.tasks[0][key] === 'boolean') {
+    totalBooleanProps++;
+  }
+}
+
+  for (const task of this.tasks) {
+
+    for (const key in task) {
+      if (typeof task[key] === 'boolean') {
+        if (task[key]) {
+          trueProps++;
+        }
+      }
+    }
+  }
+
+  return Math.round((trueProps / (totalBooleanProps*100)) * 100);
+}
 
 getSegmentedTasks(days: number): any[] {
   return this.tasks.slice(-days);
