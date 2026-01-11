@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { signInWithPopup,GoogleAuthProvider,getAuth } from '@angular/fire/auth';
+import { signInWithPopup, GoogleAuthProvider, getAuth } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { catchError, from, Observable, throwError } from 'rxjs';
@@ -9,29 +9,84 @@ import { catchError, from, Observable, throwError } from 'rxjs';
 })
 export class AuthenticationService {
 
+  private readonly SESSION_KEY = 'isUserLoggedIn';
+  private isLoggedIn: boolean = false;
+
   constructor(private auth: AngularFireAuth, private router: Router) {
-    this.isUserLoggedIn = localStorage.getItem('isUserLoggedIn') === 'true';
-   }
 
-  private isLoggedIn:boolean = false;
-
-  get isUserLoggedIn():boolean{
-    return localStorage.getItem('isUserLoggedIn') === 'true';
+    // 🔁 Restore login on refresh using Firebase auth state
+    this.auth.authState.subscribe(user => {
+      if (user) {
+        sessionStorage.setItem(this.SESSION_KEY, 'true');
+        this.isLoggedIn = true;
+      } else {
+        sessionStorage.removeItem(this.SESSION_KEY);
+        this.isLoggedIn = false;
+      }
+    });
   }
 
-  set isUserLoggedIn(value:boolean){
-    localStorage.setItem('isUserLoggedIn', value.toString());
+  // 🔐 Getter
+  get isUserLoggedIn(): boolean {
+    return sessionStorage.getItem(this.SESSION_KEY) === 'true';
+  }
+
+  // 🔐 Setter
+  set isUserLoggedIn(value: boolean) {
     this.isLoggedIn = value;
+
+    if (value) {
+      sessionStorage.setItem(this.SESSION_KEY, 'true');
+    } else {
+      sessionStorage.removeItem(this.SESSION_KEY);
+    }
   }
 
+  // 📧 Email/Password Login
   signIn(params: SignIn): Observable<any> {
-    return from(this.auth.signInWithEmailAndPassword(params.email, params.password)).pipe(
+    return from(
+      this.auth.signInWithEmailAndPassword(params.email, params.password)
+        .then(result => {
+          this.isUserLoggedIn = true;
+          return result;
+        })
+    ).pipe(
       catchError((error: FirebaseError) =>
         throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
       )
     );
   }
 
+  // 📝 Register
+  register(params: Register): Observable<any> {
+    return from(
+      this.auth.createUserWithEmailAndPassword(params.email, params.password)
+        .then(result => {
+          this.isUserLoggedIn = true;
+          return result;
+        })
+    ).pipe(
+      catchError((error: FirebaseError) =>
+        throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
+      )
+    );
+  }
+
+  // 🔑 Google Login
+  signInWithGoogle(): Observable<any> {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    return from(
+      signInWithPopup(auth, provider)
+        .then(result => {
+          this.isUserLoggedIn = true;
+          return result;
+        })
+    );
+  }
+
+  // 🔁 Password Recovery
   recoverPassword(email: string): Observable<void> {
     return from(this.auth.sendPasswordResetEmail(email)).pipe(
       catchError((error: FirebaseError) =>
@@ -40,36 +95,28 @@ export class AuthenticationService {
     );
   }
 
-  register(params: Register): Observable<any> {
-    return from(this.auth.createUserWithEmailAndPassword(params.email, params.password)).pipe(
-      catchError((error: FirebaseError) =>
-        throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
-      )
-    );
+  // 🚪 Logout
+  signOut(): void {
+    this.auth.signOut().then(() => {
+      this.isUserLoggedIn = false;
+      sessionStorage.removeItem(this.SESSION_KEY);
+      this.router.navigate(['/login']);
+    });
   }
 
+  // 🧠 Error Mapper
   private translateFirebaseErrorMessage({ code, message }: FirebaseError): string {
-    if (code === "auth/email-already-in-use") {
-      return "This email is already in use.";
+    if (code === 'auth/email-already-in-use') {
+      return 'This email is already in use.';
     }
-    if (code === "auth/weak-password") {
-      return "The password must be at least 6 characters.";
+    if (code === 'auth/weak-password') {
+      return 'The password must be at least 6 characters.';
     }
     return message;
   }
-
-  signOut(): void {
-    this.isUserLoggedIn = false;
-    localStorage.removeItem('isUserLoggedIn');
-    this.router.navigate(['/login']);
-  }
-
-  signInWithGoogle(): Observable<any> {
-    const auth = getAuth(); // Ensure Firebase is initialized
-    const provider = new GoogleAuthProvider();
-    return from(signInWithPopup(auth, provider));
-  }
 }
+
+/* ===================== TYPES ===================== */
 
 type SignIn = {
   email: string;
