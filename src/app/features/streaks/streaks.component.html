@@ -1,0 +1,13 @@
+<div class="streak-grid">
+  <mat-card *ngFor="let column of habitColumns" class="streak-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>bolt</mat-icon>
+      <mat-card-title>{{ column | titlecase }}</mat-card-title>
+      <mat-card-subtitle>{{ getStreak(column) }} day current streak</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-progress-bar mode="determinate" [value]="getBestStreak(column)"></mat-progress-bar>
+      <p>Best streak: {{ getBestStreak(column) }} days</p>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,34 @@
+.feature-card {
+  border-radius: 8px;
+}
+
+.habit-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) 1fr 56px;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.habit-row:last-child {
+  border-bottom: 0;
+}
+
+.habit-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.habit-meta span,
+.rate {
+  color: #64748b;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .habit-row {
+    grid-template-columns: 1fr;
+  }
+}

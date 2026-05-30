@@ -1,0 +1,17 @@
+<mat-card class="feature-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>checklist</mat-icon>
+    <mat-card-title>Habit Breakdown</mat-card-title>
+    <mat-card-subtitle>Completion rate by habit across the full challenge.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngFor="let column of habitColumns" class="habit-row">
+      <div class="habit-meta">
+        <strong>{{ column | titlecase }}</strong>
+        <span>{{ getCompletedCount(column) }}/{{ tasks.length }} days</span>
+      </div>
+      <mat-progress-bar mode="determinate" [value]="getCompletionRate(column)"></mat-progress-bar>
+      <span class="rate">{{ getCompletionRate(column) }}%</span>
+    </div>
+  </mat-card-content>
+</mat-card>

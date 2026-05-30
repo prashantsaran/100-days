@@ -1,4 +1,4 @@
-import { AfterContentChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterContentChecked, Component, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TodoGridComponent } from '../todo-grid/todo-grid.component';
@@ -13,11 +13,40 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ThemeService } from '../../services/theme.service';
 import { exhaustMap, Subject, tap } from 'rxjs';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RouterLink } from '@angular/router';
+import { StatsComponent } from '../../features/stats/stats.component';
+import { CalendarComponent } from '../../features/calendar/calendar.component';
+import { StreaksComponent } from '../../features/streaks/streaks.component';
+import { HabitsComponent } from '../../features/habits/habits.component';
+import { GoalsComponent } from '../../features/goals/goals.component';
+import { InsightsComponent } from '../../features/insights/insights.component';
+import { ExportComponent } from '../../features/export/export.component';
+import { FocusComponent } from '../../features/focus/focus.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule,MatIconModule,CommonModule, MatTooltipModule, MatSlideToggleModule],
+  imports: [
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    TodoGridComponent,
+    MatButtonModule,
+    MatIconModule,
+    CommonModule,
+    MatTooltipModule,
+    MatSlideToggleModule,
+    MatTabsModule,
+    RouterLink,
+    StatsComponent,
+    CalendarComponent,
+    StreaksComponent,
+    HabitsComponent,
+    GoalsComponent,
+    InsightsComponent,
+    ExportComponent,
+    FocusComponent
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

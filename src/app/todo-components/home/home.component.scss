@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0 16px 32px;
 }
 
 .top-actions{
@@ -22,6 +23,7 @@
     flex-direction: row;
     justify-content: center;
     gap: 32px;
+    width: 100%;
     .progress-bar{
         // position: relative;
         left: 15%;
@@ -30,6 +32,14 @@
         max-height: fit-content;
     }
     }
+
+.home-tabs {
+  width: min(1280px, 100%);
+}
+
+.tab-panel {
+  padding: 24px 0;
+}
 
 .progressSpinner {
     display: flex;
@@ -121,4 +131,21 @@
     margin-bottom: 4px !important;  
   }
  
+}
+
+@media (max-width: 980px) {
+  .items {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .right-item,
+  .progress-bar {
+    width: min(100%, 520px);
+  }
+
+  .save-button-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }

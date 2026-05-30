@@ -1,0 +1,11 @@
+.feature-card {
+  border-radius: 8px;
+}
+
+mat-list-item {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+mat-list-item:last-child {
+  border-bottom: 0;
+}

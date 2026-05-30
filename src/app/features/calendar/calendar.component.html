@@ -1,0 +1,19 @@
+<mat-card class="feature-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>calendar_month</mat-icon>
+    <mat-card-title>100 Day Calendar</mat-card-title>
+    <mat-card-subtitle>Each square reflects the completion level for a day.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="calendar-grid">
+      <div
+        *ngFor="let task of calendarDays"
+        class="day-cell"
+        [ngClass]="getDayClass(task)"
+        [matTooltip]="task.day + ': ' + getCompletedPercent(task) + '% complete'"
+      >
+        {{ task.dayNumber || task.day?.replace('Day ', '') }}
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

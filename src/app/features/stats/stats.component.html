@@ -1,0 +1,41 @@
+<div class="stats-container">
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <mat-icon class="icon">done_all</mat-icon>
+      <div class="info">
+        <p class="label">Total Completed</p>
+        <p class="value">{{ getTotalCompleted() }}/{{ tasks.length }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <mat-icon class="icon fire">local_fire_department</mat-icon>
+      <div class="info">
+        <p class="label">Current Streak</p>
+        <p class="value">{{ getCurrentStreak() }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <mat-icon class="icon">trending_up</mat-icon>
+      <div class="info">
+        <p class="label">Longest Streak</p>
+        <p class="value">{{ getLongestStreak() }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <mat-icon class="icon">favorite</mat-icon>
+      <div class="info">
+        <p class="label">Top Habit</p>
+        <p class="value">{{ getFavoriteHabit() }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

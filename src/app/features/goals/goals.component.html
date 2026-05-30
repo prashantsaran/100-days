@@ -1,0 +1,25 @@
+<div class="goals-grid">
+  <mat-card class="goal-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>flag</mat-icon>
+      <mat-card-title>Challenge Goal</mat-card-title>
+      <mat-card-subtitle>{{ completedDays }} complete days out of 100</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      <p>{{ remainingDays }} days remaining</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="goal-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>emoji_events</mat-icon>
+      <mat-card-title>Next Milestone</mat-card-title>
+      <mat-card-subtitle>{{ nextMilestone }}% completion target</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="big">{{ milestoneGap }}%</p>
+      <p>more progress needed</p>
+    </mat-card-content>
+  </mat-card>
+</div>

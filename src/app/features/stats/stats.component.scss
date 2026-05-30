@@ -1,0 +1,35 @@
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  border-radius: 8px;
+}
+
+mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.icon {
+  color: #2563eb;
+}
+
+.fire {
+  color: #dc2626;
+}
+
+.label {
+  margin: 0 0 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}

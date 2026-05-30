@@ -1,0 +1,15 @@
+<mat-card class="feature-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>psychology</mat-icon>
+    <mat-card-title>Insights</mat-card-title>
+    <mat-card-subtitle>Quick signals from your current challenge data.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item *ngFor="let insight of insights">
+        <mat-icon matListItemIcon>tips_and_updates</mat-icon>
+        <span matListItemTitle>{{ insight }}</span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

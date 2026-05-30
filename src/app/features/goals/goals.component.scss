@@ -1,0 +1,21 @@
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.goal-card {
+  border-radius: 8px;
+}
+
+p {
+  margin: 12px 0 0;
+  color: #475569;
+}
+
+.big {
+  color: #111827;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}
