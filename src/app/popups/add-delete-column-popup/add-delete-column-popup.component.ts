@@ -29,6 +29,7 @@ import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 })
 export class AddDeleteColumnPopupComponent {
   columns: string[] = []; // Array to manage column names
+  originalColumns: string[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AddDeleteColumnPopupComponent>,
@@ -39,6 +40,8 @@ export class AddDeleteColumnPopupComponent {
     // Initialize columns from existing task keys
     const sampleTask = this.todoService.tasks[0] || {};
     this.columns = Object.keys(sampleTask).filter((key) => key !== 'day' && key !== 'dayNumber' && key !== 'completed' && key !== 'isCompleted');
+    // keep a copy for detecting removals
+    this.originalColumns = [...this.columns];
   }
 
   addColumn(): void {
@@ -57,9 +60,19 @@ export class AddDeleteColumnPopupComponent {
     this.columns.splice(index, 1); // Remove column name
 
     // Remove the column from all tasks
-    // this.todoService.tasks.forEach((task) => {
-    //   delete task[columnToDelete];
-    // });
+    this.todoService.tasks.forEach((task) => {
+      if (columnToDelete in task) {
+        delete task[columnToDelete];
+      }
+    });
+    // Recompute completed percentage and isCompleted for each task, then persist
+    this.todoService.tasks.forEach((task) => {
+      this.todoService.updateAndGetCompletedPercentage(task, true);
+      task.isCompleted = Object.keys(task)
+        .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
+        .every((key) => task[key]);
+    });
+    this.todoService.updateLocalCache(this.todoService.tasks);
   }
 
   saveColumns(): void {
@@ -74,6 +87,25 @@ export class AddDeleteColumnPopupComponent {
         }
       });
     });
+
+    // Remove any columns that were present originally but removed now
+    const removed = this.originalColumns.filter(col => !this.columns.includes(col));
+    if (removed.length) {
+      this.todoService.tasks.forEach((task) => {
+        removed.forEach((col) => {
+          if (col in task) delete task[col];
+        });
+      });
+    }
+
+    // Recompute completed percentage and isCompleted for each task, then persist
+    this.todoService.tasks.forEach((task) => {
+      this.todoService.updateAndGetCompletedPercentage(task, true);
+      task.isCompleted = Object.keys(task)
+        .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
+        .every((key) => task[key]);
+    });
+    this.todoService.updateLocalCache(this.todoService.tasks);
 
     this.dialogRef.close(this.columns); // Close dialog with updated columns
   }

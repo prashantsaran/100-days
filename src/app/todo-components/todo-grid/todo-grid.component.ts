@@ -54,7 +54,7 @@ tasks: InputSignal<any[]> = input<any[]>([]);
   ]);
 
   get columns(){
-    return this.displayedColumns();
+    return this.todoService.displayedColumns;
   }
 
   dataSource = new MatTableDataSource<PeriodicElement>();
@@ -137,6 +137,8 @@ this.todoService.initializeGridData();
       if (result) {
         this.totalFields=result;
         this.todoService.displayedColumns =[ 'day',...result,'completed']; 
+        // refresh data reference so template reflects removed/added columns
+        this.dataSource.data = this.todoService.tasks;
         // this.todoService.initializeGridData(this.displayedColumns);
         // this.dataSource.data=this.todoService.tasks;
       }
