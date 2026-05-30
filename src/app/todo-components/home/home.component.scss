@@ -8,6 +8,15 @@
     align-items: center;
 }
 
+.top-actions{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  // width: 100%;
+  padding: 12px 24px;
+}
+
 .items{
     display: flex;
     flex-direction: row;

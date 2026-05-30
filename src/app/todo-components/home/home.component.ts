@@ -10,12 +10,14 @@ import { MatDialog } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ThemeService } from '../../services/theme.service';
 import { exhaustMap, Subject, tap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule,MatIconModule,CommonModule, MatTooltipModule],
+  imports: [MatProgressBarModule, MatProgressSpinnerModule, TodoGridComponent,MatButtonModule,MatIconModule,CommonModule, MatTooltipModule, MatSlideToggleModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -38,8 +40,9 @@ export class HomeComponent implements OnInit , AfterContentChecked{
   overallCompletion = 0;
   _displayedColumns:string[]=[];
   isRotating: boolean=false;
+  isDarkMode: boolean = false;
   
-  constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog) {
+  constructor(private todoService: TodoService,private authService : AuthenticationService, private dialog: MatDialog, private themeService: ThemeService) {
     
   }
 
@@ -87,6 +90,22 @@ export class HomeComponent implements OnInit , AfterContentChecked{
     )
     .subscribe();
    
+   // read initial theme state
+   this.isDarkMode = this.themeService.isDarkModeEnabled();
+   
+  }
+
+  mode:string='Light';
+
+  toggleTheme(checked: boolean) {
+    if (checked) {
+      this.mode='Dark';
+      this.themeService.enableDarkMode();
+    } else {
+      this.mode='Light';
+      this.themeService.disableDarkMode();
+    }
+    this.isDarkMode = checked;
   }
 
     saveGridData() {

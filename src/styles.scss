@@ -187,6 +187,117 @@ body.dark-mode {
   color: var(--text-dark);
 }
 
+/* Dark mode overrides for Angular Material and app components */
+body.dark-mode {
+  --app-surface: #1e1e1e;
+  --app-surface-2: #232323;
+  --app-border: #333333;
+  --app-muted: #bdbdbd;
+  --app-primary: #90caf9;
+}
+
+/* Ensure general text/icon color in dark mode */
+body.dark-mode, body.dark-mode * {
+  color: var(--text-dark) !important;
+}
+
+/* Keep icons readable but avoid forcing image elements */
+body.dark-mode img {
+  filter: none !important;
+}
+
+/* Table cell backgrounds should use surface color */
+body.dark-mode .mat-mdc-table .mat-mdc-table__row, body.dark-mode .mat-mdc-table td, body.dark-mode .mat-mdc-table th {
+  background: transparent !important;
+  color: var(--text-dark) !important;
+}
+
+/* Make buttons more contrasted */
+body.dark-mode .save-button-container button, body.dark-mode .logout-btn {
+  background: #111 !important;
+  color: var(--text-dark) !important;
+  border: 1px solid var(--app-border) !important;
+}
+
+/* Ensure overlay panels (dialogs / selects) follow dark surface */
+body.dark-mode .cdk-overlay-pane, body.dark-mode .mat-mdc-dialog-container, body.dark-mode .mat-mdc-select-panel {
+  background: var(--app-surface) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Buttons */
+body.dark-mode .mat-mdc-button, body.dark-mode .mat-mdc-raised-button, body.dark-mode .mat-mdc-stroked-button {
+  color: var(--text-dark) !important;
+}
+body.dark-mode .mat-mdc-raised-button, body.dark-mode .mat-mdc-button.mat-primary {
+  background-color: var(--app-surface-2) !important;
+  border: 1px solid var(--app-border) !important;
+}
+
+/* Table and grid */
+body.dark-mode table, body.dark-mode .mat-mdc-table {
+  background: var(--app-surface) !important;
+  color: var(--text-dark) !important;
+}
+body.dark-mode th.mat-mdc-header-cell, body.dark-mode thead th {
+  background: transparent !important;
+  color: var(--text-dark) !important;
+  border-bottom: 1px solid var(--app-border) !important;
+}
+body.dark-mode td, body.dark-mode tr {
+  border-bottom: 1px solid var(--app-border) !important;
+}
+
+/* Right panel / cards */
+body.dark-mode .right-item, body.dark-mode .progress-bar, body.dark-mode mat-card {
+  background: var(--app-surface) !important;
+  color: var(--text-dark) !important;
+  border: 1px solid var(--app-border) !important;
+}
+
+/* Progress bars */
+body.dark-mode .mat-mdc-linear-progress .mdc-linear-progress__bar-inner {
+  background-color: var(--app-primary) !important;
+}
+body.dark-mode .mat-mdc-linear-progress .mdc-linear-progress__buffer {
+  background-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Checkboxes */
+body.dark-mode .mat-mdc-checkbox .mdc-checkbox__background {
+  background-color: transparent !important;
+  border-color: var(--app-border) !important;
+}
+body.dark-mode .mat-mdc-checkbox .mdc-checkbox__native-control:checked ~ .mdc-checkbox__background {
+  background-color: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+}
+
+/* Paginator and controls */
+body.dark-mode .mat-mdc-paginator, body.dark-mode .mat-mdc-select-panel {
+  background: var(--app-surface) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Inputs and form fields */
+body.dark-mode .mat-mdc-form-field-infix, body.dark-mode .mat-mdc-form-field-flex {
+  background: transparent !important;
+  color: var(--text-dark) !important;
+}
+
+/* Slide toggle */
+body.dark-mode .mat-mdc-slide-toggle .mat-mdc-slide-toggle-thumb {
+  background: var(--text-dark) !important;
+}
+body.dark-mode .mat-mdc-slide-toggle.mat-checked .mat-mdc-slide-toggle-bar {
+  background: var(--app-primary) !important;
+}
+
+/* Make sure progress text uses theme color */
+body.dark-mode .progress-bar p, body.dark-mode .quote {
+  color: var(--text-dark) !important;
+}
+
 .theme-switch {
   display: flex;
   align-items: center;

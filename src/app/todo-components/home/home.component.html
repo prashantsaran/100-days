@@ -1,8 +1,11 @@
 
-<button mat-stroked-button color="primary" matTooltip="logout"   class="logout-btn"  routerLink="/login" (click)="logOut()">
-Logout
-  <mat-icon>logout</mat-icon>
+<div class="top-actions">
+  <mat-slide-toggle [checked]="isDarkMode" (change)="toggleTheme($event.checked)">{{mode}} Mode</mat-slide-toggle>
+  <button mat-stroked-button color="primary" matTooltip="logout"   class="logout-btn"  routerLink="/login" (click)="logOut()">
+    Logout
+    <mat-icon>logout</mat-icon>
   </button>
+</div>
 <div class="container">
     <div class="title">
     <h2>{{ title }}</h2>
