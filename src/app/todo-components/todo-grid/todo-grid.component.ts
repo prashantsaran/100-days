@@ -16,7 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { collection, doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { MatSnackBarModule ,MatSnackBar} from '@angular/material/snack-bar';
 import {MatButtonModule} from '@angular/material/button';
 import { TodoService } from '../todo.service';
@@ -27,7 +27,6 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AddDeleteColumnPopupComponent } from '../../popups/add-delete-column-popup/add-delete-column-popup.component';
 import {MatCardModule} from '@angular/material/card';
-import { environment } from '../../../environments/environment';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
@@ -129,7 +128,6 @@ this.todoService.initializeGridData();
       }
       if (result) {
         this.totalFields=result;
-        this.todoService.displayedColumns =[ 'day',...result,'completed']; 
         // refresh data reference so template reflects removed/added columns
         this.dataSource.data = this.todoService.tasks;
         // this.todoService.initializeGridData(this.displayedColumns);
@@ -147,16 +145,10 @@ this.todoService.initializeGridData();
   saveGridData(): void {
 
   
-    const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
-  
-    const batchPromises = this.dataSource.data.map((row) =>
-      setDoc(doc(todoCollection, row.day), {
-        ...row,
-        dayNumber: parseInt(row.day.split(' ')[1]),
-      })
-    );
-  
-    Promise.all(batchPromises)
+    Promise.all([
+      this.todoService.saveTasksToFirestore(this.dataSource.data),
+      this.todoService.saveColumnConfigsToFirestore(),
+    ])
       .then(() => {
         this.todoService.updateLocalCache(this.dataSource.data);
         console.log('Data successfully saved to Firestore!');

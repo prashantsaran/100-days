@@ -43,10 +43,8 @@ export class AddDeleteColumnPopupComponent {
     private todoService: TodoService,
     private snackBar: MatSnackBar,
   ) {
-    const sampleTask = this.todoService.tasks[0] || {};
-    const columnNames = Object.keys(sampleTask).filter((key) => key !== 'day' && key !== 'dayNumber' && key !== 'completed' && key !== 'isCompleted');
-    this.columns = columnNames.map((name) => ({ name, startDay: 1, endDay: 100, existing: true }));
-    this.originalColumns = [...columnNames];
+    this.columns = this.todoService.columnConfigs.map((column) => ({ ...column, existing: true }));
+    this.originalColumns = this.columns.map((column) => column.name);
   }
 
   addColumn(): void {
@@ -80,7 +78,7 @@ export class AddDeleteColumnPopupComponent {
     }
   }
 
-  saveColumns(): void {
+  async saveColumns(): Promise<void> {
     const validColumns = this.columns
       .map((column) => ({
         ...column,
@@ -97,7 +95,9 @@ export class AddDeleteColumnPopupComponent {
       return;
     }
 
-    const duplicateNames = validColumns.map((c) => c.name).filter((name, index, arr) => arr.indexOf(name) !== index);
+    const duplicateNames = validColumns
+      .map((c) => c.name.toLowerCase())
+      .filter((name, index, arr) => arr.indexOf(name) !== index);
     if (duplicateNames.length > 0) {
       this.snackBar.open('Column names must be unique.', 'OK', {
         duration: 5000,
@@ -106,6 +106,7 @@ export class AddDeleteColumnPopupComponent {
     }
 
     this.columns = validColumns;
+    this.todoService.setColumnConfigs(this.columns);
 
     const removed = this.originalColumns.filter((col) => !this.columns.map((c) => c.name).includes(col));
     if (removed.length) {
@@ -116,33 +117,21 @@ export class AddDeleteColumnPopupComponent {
       });
     }
 
-    this.todoService.tasks.forEach((task) => {
-      this.columns.forEach((column) => {
-        const start = Math.min(column.startDay, column.endDay);
-        const end = Math.max(column.startDay, column.endDay);
-        const active = task.dayNumber >= start && task.dayNumber <= end;
-
-        if (active) {
-          if (!(column.name in task)) {
-            task[column.name] = false;
-          }
-        } else {
-          if (column.name in task) {
-            delete task[column.name];
-          }
-        }
-      });
-    });
-
-    this.todoService.tasks.forEach((task) => {
-      this.todoService.updateAndGetCompletedPercentage(task, true);
-      task.isCompleted = Object.keys(task)
-        .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
-        .every((key) => task[key]);
-    });
+    this.todoService.reconcileTasksWithColumnConfigs();
 
     this.todoService.updateLocalCache(this.todoService.tasks);
-    this.dialogRef.close(this.columns.map((c) => c.name));
+
+    try {
+      await Promise.all([
+        this.todoService.saveColumnConfigsToFirestore(),
+        this.todoService.saveTasksToFirestore(),
+      ]);
+      this.dialogRef.close(this.columns.map((c) => c.name));
+    } catch {
+      this.snackBar.open('Saved locally, but Firebase save failed. Please try Save Changes again.', 'OK', {
+        duration: 5000,
+      });
+    }
   }
 
   closePopup(): void {
@@ -153,4 +142,3 @@ export class AddDeleteColumnPopupComponent {
     return index;
   }
 }
-
