@@ -109,6 +109,7 @@ export class LoginPageComponent implements OnInit {
     this.authService.signInWithGoogle().subscribe({
       next: (result) => {
         this.authService.isUserLoggedIn = true;
+        this.todoService.clearCache();
         this.router.navigate(['home']);
         this.snackBar.open('Signed in with Google successfully!', 'OK', {
           duration: 5000,

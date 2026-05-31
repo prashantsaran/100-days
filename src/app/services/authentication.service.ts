@@ -3,6 +3,7 @@ import { signInWithPopup, GoogleAuthProvider, getAuth } from '@angular/fire/auth
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { catchError, from, Observable, throwError } from 'rxjs';
+import { TodoService } from '../todo-components/todo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthenticationService {
   private readonly SESSION_KEY = 'isUserLoggedIn';
   private isLoggedIn: boolean = false;
 
-  constructor(private auth: AngularFireAuth, private router: Router) {
+  constructor(private auth: AngularFireAuth, private router: Router, private todoService: TodoService) {
 
     // 🔁 Restore login on refresh using Firebase auth state
     this.auth.authState.subscribe(user => {
@@ -99,6 +100,7 @@ export class AuthenticationService {
   signOut(): void {
     this.auth.signOut().then(() => {
       this.isUserLoggedIn = false;
+      this.todoService.clearCache();
       sessionStorage.removeItem(this.SESSION_KEY);
       this.router.navigate(['/login']);
     });

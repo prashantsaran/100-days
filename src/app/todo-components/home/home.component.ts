@@ -94,13 +94,10 @@ export class HomeComponent implements OnInit , AfterContentChecked{
 
   private refreshClick$ = new Subject<void>();
 
-   ngOnInit() {
-    this.todoService.initializeGridData();
-    
-    setTimeout(()=>{
-      this.tasks=this.todoService.tasks;
+   async ngOnInit(): Promise<void> {
+    await this.todoService.initializeGridData();
+    this.tasks=this.todoService.tasks;
 
-    },500)
     this.refreshQuotes();
     this.refreshClick$
     .pipe(

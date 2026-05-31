@@ -51,7 +51,7 @@ export class AddDeleteColumnPopupComponent {
     this.columns.push({ name: '', startDay: 1, endDay: 100 });
   }
 
-  deleteColumn(index: number): void {
+  async deleteColumn(index: number): Promise<void> {
     if (this.columns.length < 2) {
       this.snackBar.open('There must be at least one column', 'OK', {
         duration: 5000,
@@ -74,7 +74,7 @@ export class AddDeleteColumnPopupComponent {
           .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
           .every((key) => task[key]);
       });
-      this.todoService.updateLocalCache(this.todoService.tasks);
+      await this.todoService.updateLocalCache(this.todoService.tasks);
     }
   }
 
@@ -106,7 +106,7 @@ export class AddDeleteColumnPopupComponent {
     }
 
     this.columns = validColumns;
-    this.todoService.setColumnConfigs(this.columns);
+    await this.todoService.setColumnConfigs(this.columns);
 
     const removed = this.originalColumns.filter((col) => !this.columns.map((c) => c.name).includes(col));
     if (removed.length) {
@@ -119,7 +119,7 @@ export class AddDeleteColumnPopupComponent {
 
     this.todoService.reconcileTasksWithColumnConfigs();
 
-    this.todoService.updateLocalCache(this.todoService.tasks);
+    await this.todoService.updateLocalCache(this.todoService.tasks);
 
     try {
       await Promise.all([

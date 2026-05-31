@@ -3,8 +3,9 @@ import { collection, doc, Firestore, getDoc, getDocs, orderBy, query, setDoc } f
 
 import { PeriodicElement } from './todo-grid/todo-grid.component';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 export interface ColumnConfig {
   name: string;
@@ -19,12 +20,15 @@ export class TodoService {
 
   private _tasks: any[] = [];
   private readonly COLUMN_CONFIGS_KEY = 'todoGridColumnConfigs';
-  private readonly COLUMN_CONFIGS_DOC_ID = '__columnConfigs';
+  private readonly METADATA_COLLECTION = 'metadata';
+  private readonly COLUMN_CONFIGS_DOC_ID = 'columnConfigs';
+  private readonly DAYS_COLLECTION = 'days';
+  private initializePromise?: Promise<void>;
   public columnConfigs: ColumnConfig[] = [];
   // private readonly STORAGE_KEY = 'todoGridData';
   // private readonly FIRESTORE_COLLECTION = 'todoGrid';
   public updatedColumns :string[]=['books', 'skills', 'meditate'];
-  constructor(private firestore: Firestore,private http: HttpClient) {
+  constructor(private firestore: Firestore,private http: HttpClient, private auth: AngularFireAuth) {
   }
 
   set tasks(value: any[]){
@@ -58,19 +62,50 @@ export class TodoService {
 
 
   async getData() {
-      const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
+      const todoCollection = await this.getUserDaysCollection();
       const orderedQuery = query(todoCollection, orderBy('dayNumber'));
       const querySnapshot = await getDocs(orderedQuery);
       const firebaseData = querySnapshot.docs.map((doc) => doc.data() );
       return firebaseData;
 }
 
-  private loadColumnConfigs(): boolean {
-    const cachedConfig = localStorage.getItem(this.COLUMN_CONFIGS_KEY);
+  private async getCurrentUserId(): Promise<string> {
+    const currentUser = await this.auth.currentUser;
+
+    if (currentUser?.uid) {
+      return currentUser.uid;
+    }
+
+    const user = await firstValueFrom(this.auth.authState);
+
+    if (!user?.uid) {
+      throw new Error('You must be logged in before loading tracker data.');
+    }
+
+    return user.uid;
+  }
+
+  private async getUserDaysCollection() {
+    const userId = await this.getCurrentUserId();
+    return collection(this.firestore, environment.FIRESTORE_COLLECTION, userId, this.DAYS_COLLECTION);
+  }
+
+  private async getUserColumnConfigDoc() {
+    const userId = await this.getCurrentUserId();
+    return doc(this.firestore, environment.FIRESTORE_COLLECTION, userId, this.METADATA_COLLECTION, this.COLUMN_CONFIGS_DOC_ID);
+  }
+
+  private async getUserStorageKey(key: string): Promise<string> {
+    const userId = await this.getCurrentUserId();
+    return `${key}:${userId}`;
+  }
+
+  private async loadColumnConfigs(): Promise<boolean> {
+    const cachedConfig = localStorage.getItem(await this.getUserStorageKey(this.COLUMN_CONFIGS_KEY));
     if (cachedConfig) {
       try {
         this.columnConfigs = this.normalizeColumnConfigs(JSON.parse(cachedConfig) as ColumnConfig[]);
-        this.saveColumnConfigs();
+        await this.saveColumnConfigs();
         return true;
       } catch {
         this.columnConfigs = [];
@@ -80,12 +115,12 @@ export class TodoService {
     return false;
   }
 
-  saveColumnConfigs(): void {
-    localStorage.setItem(this.COLUMN_CONFIGS_KEY, JSON.stringify(this.columnConfigs));
+  async saveColumnConfigs(): Promise<void> {
+    localStorage.setItem(await this.getUserStorageKey(this.COLUMN_CONFIGS_KEY), JSON.stringify(this.columnConfigs));
   }
 
   async loadColumnConfigsFromFirestore(): Promise<boolean> {
-    const configRef = doc(this.firestore, environment.FIRESTORE_COLLECTION, this.COLUMN_CONFIGS_DOC_ID);
+    const configRef = await this.getUserColumnConfigDoc();
     const configSnapshot = await getDoc(configRef);
 
     if (!configSnapshot.exists()) {
@@ -101,13 +136,13 @@ export class TodoService {
         startDay: Math.max(1, Math.min(100, Number(config.startDay) || 1)),
         endDay: Math.max(1, Math.min(100, Number(config.endDay) || 100)),
       })));
-    this.saveColumnConfigs();
+    await this.saveColumnConfigs();
 
     return true;
   }
 
   async saveColumnConfigsToFirestore(): Promise<void> {
-    const configRef = doc(this.firestore, environment.FIRESTORE_COLLECTION, this.COLUMN_CONFIGS_DOC_ID);
+    const configRef = await this.getUserColumnConfigDoc();
     await setDoc(configRef, {
       columns: this.columnConfigs,
       updatedAt: new Date().toISOString(),
@@ -115,7 +150,7 @@ export class TodoService {
   }
 
   async saveTasksToFirestore(data: PeriodicElement[] = this.tasks): Promise<void> {
-    const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
+    const todoCollection = await this.getUserDaysCollection();
 
     await Promise.all(data.map((row) =>
       setDoc(doc(todoCollection, row.day), {
@@ -125,13 +160,13 @@ export class TodoService {
     ));
   }
 
-  setColumnConfigs(configs: ColumnConfig[]): void {
+  async setColumnConfigs(configs: ColumnConfig[]): Promise<void> {
     this.columnConfigs = this.normalizeColumnConfigs(configs.map((config) => ({
       name: config.name,
       startDay: Math.min(config.startDay, config.endDay),
       endDay: Math.max(config.startDay, config.endDay),
     })));
-    this.saveColumnConfigs();
+    await this.saveColumnConfigs();
     this.refreshDisplayedColumns();
     this.reconcileTasksWithColumnConfigs();
   }
@@ -230,10 +265,23 @@ export class TodoService {
   }
 
   async initializeGridData(gridColumns ?:string[]): Promise<void> {
+    if (this.initializePromise) {
+      return this.initializePromise;
+    }
+
+    this.initializePromise = this.loadGridData(gridColumns).finally(() => {
+      this.initializePromise = undefined;
+    });
+
+    return this.initializePromise;
+  }
+
+  private async loadGridData(gridColumns ?:string[]): Promise<void> {
     try {
-      const hasLocalColumnConfigs = this.loadColumnConfigs();
-      const cachedData = localStorage.getItem(environment.STORAGE_KEY);
-      const todoCollection = collection(this.firestore, environment.FIRESTORE_COLLECTION);
+      this.tasks = [];
+      const hasLocalColumnConfigs = await this.loadColumnConfigs();
+      const cachedData = localStorage.getItem(await this.getUserStorageKey(environment.STORAGE_KEY));
+      const todoCollection = await this.getUserDaysCollection();
       const orderedQuery = query(todoCollection, orderBy('dayNumber'));
       const querySnapshot = await getDocs(orderedQuery);
       const hasFirebaseColumnConfigs = hasLocalColumnConfigs ? true : await this.loadColumnConfigsFromFirestore();
@@ -245,7 +293,7 @@ export class TodoService {
         console.log('Loading data from Firestore...');
         const firebaseData = querySnapshot.docs.map((doc) => doc.data() as PeriodicElement);
         this.tasks = firebaseData;
-        this.updateLocalCache(firebaseData);
+        await this.updateLocalCache(firebaseData);
       } else if(gridColumns){
         // No special handling required for gridColumns parameter currently
       } else {
@@ -257,26 +305,26 @@ export class TodoService {
           'meditate',
           'completed',
         ]);
-        this.updateLocalCache(this.tasks);
+        await this.updateLocalCache(this.tasks);
       }
 
       if (!hasFirebaseColumnConfigs && (!this.columnConfigs || this.columnConfigs.length === 0)) {
         this.ensureColumnConfigsFromTasks();
-        this.saveColumnConfigs();
+        await this.saveColumnConfigs();
         await this.saveColumnConfigsToFirestore();
       }
 
       this.refreshDisplayedColumns();
       this.reconcileTasksWithColumnConfigs();
-      this.updateLocalCache(this.tasks);
+      await this.updateLocalCache(this.tasks);
       await this.saveColumnConfigsToFirestore();
     } catch (error) {
       console.error('Error initializing grid data:', error);
     }
   }
 
-   updateLocalCache(data: PeriodicElement[]): void {
-    localStorage.setItem(environment.STORAGE_KEY, JSON.stringify(data));
+   async updateLocalCache(data: PeriodicElement[]): Promise<void> {
+    localStorage.setItem(await this.getUserStorageKey(environment.STORAGE_KEY), JSON.stringify(data));
   }
 
   generateDefaultData(columns: string[]): PeriodicElement[] {
@@ -333,6 +381,11 @@ export class TodoService {
   }
 
   clearCache() {
-    localStorage.removeItem(environment.STORAGE_KEY)  }
+    localStorage.removeItem(environment.STORAGE_KEY);
+    localStorage.removeItem(this.COLUMN_CONFIGS_KEY);
+    this._tasks = [];
+    this.columnConfigs = [];
+    this.displayedColumns = ['day', 'completed'];
+  }
       
 }

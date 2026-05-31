@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 export const environment = {
       STORAGE_KEY : 'todoGridData',
-      FIRESTORE_COLLECTION : 'todoGrid',
+      FIRESTORE_COLLECTION : 'todoGridMultiUser',
       quotsAPI:'https://thequoteshub.com/api/'
     
 };

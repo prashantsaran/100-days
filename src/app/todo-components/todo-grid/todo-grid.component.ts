@@ -78,12 +78,15 @@ export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,Afte
     this.dataSource.paginator = this.paginator;
 
   }
-  ngOnInit(){
-this.todoService.initializeGridData();
+  async ngOnInit(): Promise<void> {
+    await this.todoService.initializeGridData();
+    this.dataSource.data = this.todoService.tasks;
+    this.dataSource.paginator = this.paginator;
+    this.emitTaskData();
   }
 
 
-  onCheckboxChange(row: any, field: string, checked: boolean): void {
+  async onCheckboxChange(row: any, field: string, checked: boolean): Promise<void> {
     row[field] = checked;
     // let flag=false;
     // row.isCompleted=true;
@@ -96,7 +99,7 @@ this.todoService.initializeGridData();
     // row.isCompleted = row.books && row.skills && row.meditate && row.workout;
 
     this.todoService.updateAndGetCompletedPercentage(row);
-    this.todoService.updateLocalCache(this.dataSource.data); 
+    await this.todoService.updateLocalCache(this.dataSource.data); 
     this.emitTaskData();
   }
 
@@ -185,7 +188,7 @@ this.todoService.initializeGridData();
     });
   }
 
-  resetData(): void {
+  async resetData(): Promise<void> {
     // Reset the data to default
     const defaultData = this.todoService.generateDefaultData(this.columns);
     this.dataSource.data = defaultData;
@@ -193,7 +196,7 @@ this.todoService.initializeGridData();
     this.saveGridData();
     
     // Update local cache and emit tasks
-    this.todoService.updateLocalCache(defaultData);
+    await this.todoService.updateLocalCache(defaultData);
     this.emitTaskData();
 
     // Show success snackbar
