@@ -1,59 +1,97 @@
 .column-row {
   padding-top: 4px;
-    display: flex;
-    align-items: top;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  mat-form-field {
-    flex: 1;
-  }
-  
-  .delete-btn{
-    margin-top: 2px;
-    max-height: fit-content;
-    padding: 0;
-    margin :0 ;
-    max-width: fit-content;
-    background-color: white;
-    border: 0;
-    position: relative;
-    top: 0;
-    transition: top ease 0.5s;
-  }
-  .delete-btn:hover{
-    top: -3px;
-    box-shadow: 0 0 3px black; 
-    border-radius: 5px;
-   }
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
 
-  .openAddorDeletePopup{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 492px;
-    overflow-y: scroll;
-    
-  }
+.column-row .row-header {
+  min-width: 80px;
+  font-weight: 600;
+  align-self: center;
+}
 
+.column-row mat-form-field {
+  flex: 1 1 160px;
+  min-width: 160px;
+}
 
-  .buttons{
-    display: flex;
-    gap: 130px;
-    margin-top: 20px;
-  }
+.delete-btn {
+  margin-top: 2px;
+  max-height: fit-content;
+  padding: 0;
+  margin: 0;
+  max-width: fit-content;
+  background-color: white;
+  border: 0;
+  position: relative;
+  top: 0;
+  transition: top ease 0.5s;
+  align-self: flex-end;
+}
 
-  .input-box{
-    max-height: 298px;
-    overflow-y: scroll;
-  }
-  .add-button{
-    margin-top: 10px;
-  }
-  .buttons{
-  button{
-    background-color: black !important;
-    color: white !important;
-  }
+.delete-btn:hover {
+  top: -3px;
+  box-shadow: 0 0 3px black;
+  border-radius: 5px;
+}
+
+.openAddorDeletePopup {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: min(95vw, 1000px);
+  width: auto;
+  height: 492px;
+  padding: 16px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.add-column-dialog .mat-dialog-container {
+  width: auto !important;
+  max-width: 95vw !important;
+  padding: 0 !important;
+}
+
+.header-row {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 8px;
+}
+
+.field-header {
+  flex: 1 1 160px;
+  min-width: 160px;
+}
+
+.header-row .row-header {
+  min-width: 40px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.input-box {
+  max-height: 298px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.add-button {
+  margin-top: 10px;
+}
+
+.buttons button {
+  background-color: black !important;
+  color: white !important;
 }

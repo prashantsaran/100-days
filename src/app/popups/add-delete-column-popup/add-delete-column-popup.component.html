@@ -2,29 +2,57 @@
   <h2 mat-dialog-title>Manage Columns</h2>
   <div mat-dialog-content>
     <div class="input-box">
-    @for (column of columns; let i = $index; track trackByIndex){
-      <div class="column-row">
-      <mat-form-field>
-        <input
-          matInput
-          [(ngModel)]="columns[i]"
-          placeholder="Column {{ i + 1 }}"
-        />
-      </mat-form-field>
-      <button  class="delete-btn"
-      (click)="deleteColumn(i)" >
-      <mat-icon matTooltip ="delete"  >delete</mat-icon>
-      </button>
+      <div class="column-row header-row">
+        <div class="row-header">#</div>
+        <div class="field-header">Task Name</div>
+        <div class="field-header">Start Day</div>
+        <div class="field-header">End Day</div>
+        <div class="row-header"></div>
+      </div>
+      @for (column of columns; let i = $index; track trackByIndex){
+        <div class="column-row">
+          <div class="row-header">{{ i + 1 }}</div>
+          <mat-form-field appearance="fill">
+            <mat-label>Task Name</mat-label>
+            <input
+              matInput
+              [(ngModel)]="columns[i].name"
+              placeholder="Enter task name"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Start Day</mat-label>
+            <input
+              matInput
+              type="number"
+              min="1"
+              max="100"
+              [(ngModel)]="columns[i].startDay"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>End Day</mat-label>
+            <input
+              matInput
+              type="number"
+              min="1"
+              max="100"
+              [(ngModel)]="columns[i].endDay"
+            />
+          </mat-form-field>
+          <button class="delete-btn" (click)="deleteColumn(i)">
+            <mat-icon matTooltip="delete">delete</mat-icon>
+          </button>
+        </div>
+      }
     </div>
-    }
-  </div>
-  
+    <p class="hint">Leave start and end day equal for a one-day task.</p>
     <button mat-stroked-button class="add-button" color="primary" (click)="addColumn()">
       Add Column
     </button>
   </div>
   <div class="buttons" mat-dialog-actions>
-    <button mat-raised-button  (click)="closePopup()">Close</button>
+    <button mat-raised-button (click)="closePopup()">Close</button>
     <button mat-raised-button (click)="saveColumns()">Save</button>
   </div>
 </div>

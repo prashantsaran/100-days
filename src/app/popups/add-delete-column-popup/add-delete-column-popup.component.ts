@@ -8,13 +8,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
-import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+interface ColumnConfig {
+  name: string;
+  startDay: number;
+  endDay: number;
+  existing?: boolean;
+}
 
 @Component({
   selector: 'app-add-delete-column-popup',
   standalone: true,
   imports: [
-    // Angular Material imports and common modules
     CommonModule,
     FormsModule,
     MatButtonModule,
@@ -28,7 +34,7 @@ import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
   styleUrls: ['./add-delete-column-popup.component.scss'],
 })
 export class AddDeleteColumnPopupComponent {
-  columns: string[] = []; // Array to manage column names
+  columns: ColumnConfig[] = [];
   originalColumns: string[] = [];
 
   constructor(
@@ -37,59 +43,71 @@ export class AddDeleteColumnPopupComponent {
     private todoService: TodoService,
     private snackBar: MatSnackBar,
   ) {
-    // Initialize columns from existing task keys
     const sampleTask = this.todoService.tasks[0] || {};
-    this.columns = Object.keys(sampleTask).filter((key) => key !== 'day' && key !== 'dayNumber' && key !== 'completed' && key !== 'isCompleted');
-    // keep a copy for detecting removals
-    this.originalColumns = [...this.columns];
+    const columnNames = Object.keys(sampleTask).filter((key) => key !== 'day' && key !== 'dayNumber' && key !== 'completed' && key !== 'isCompleted');
+    this.columns = columnNames.map((name) => ({ name, startDay: 1, endDay: 100, existing: true }));
+    this.originalColumns = [...columnNames];
   }
 
   addColumn(): void {
-    this.columns.push(''); // Add a blank column for editing
+    this.columns.push({ name: '', startDay: 1, endDay: 100 });
   }
 
   deleteColumn(index: number): void {
-    if(this.columns.length<2){
+    if (this.columns.length < 2) {
       this.snackBar.open('There must be at least one column', 'OK', {
         duration: 5000,
       });
       return;
     }
-    const columnToDelete = this.columns[index];
 
-    this.columns.splice(index, 1); // Remove column name
+    const columnToDelete = this.columns[index].name;
+    this.columns.splice(index, 1);
 
-    // Remove the column from all tasks
-    this.todoService.tasks.forEach((task) => {
-      if (columnToDelete in task) {
-        delete task[columnToDelete];
-      }
-    });
-    // Recompute completed percentage and isCompleted for each task, then persist
-    this.todoService.tasks.forEach((task) => {
-      this.todoService.updateAndGetCompletedPercentage(task, true);
-      task.isCompleted = Object.keys(task)
-        .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
-        .every((key) => task[key]);
-    });
-    this.todoService.updateLocalCache(this.todoService.tasks);
+    if (columnToDelete) {
+      this.todoService.tasks.forEach((task) => {
+        if (columnToDelete in task) {
+          delete task[columnToDelete];
+        }
+      });
+      this.todoService.tasks.forEach((task) => {
+        this.todoService.updateAndGetCompletedPercentage(task, true);
+        task.isCompleted = Object.keys(task)
+          .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
+          .every((key) => task[key]);
+      });
+      this.todoService.updateLocalCache(this.todoService.tasks);
+    }
   }
 
   saveColumns(): void {
-    // Filter out empty or invalid column names
-    this.columns = this.columns.filter((column) => column.trim() !== '');
+    const validColumns = this.columns
+      .map((column) => ({
+        ...column,
+        name: column.name.trim(),
+        startDay: Math.max(1, Math.min(100, column.startDay)),
+        endDay: Math.max(1, Math.min(100, column.endDay)),
+      }))
+      .filter((column) => column.name !== '');
 
-    // Add new columns to all tasks
-    this.todoService.tasks.forEach((task) => {
-      this.columns.forEach((column) => {
-        if (!(column in task)) {
-          task[column] = false; // Initialize new columns with default value
-        }
+    if (validColumns.length !== this.columns.length) {
+      this.snackBar.open('Please fill in every column name before saving.', 'OK', {
+        duration: 5000,
       });
-    });
+      return;
+    }
 
-    // Remove any columns that were present originally but removed now
-    const removed = this.originalColumns.filter(col => !this.columns.includes(col));
+    const duplicateNames = validColumns.map((c) => c.name).filter((name, index, arr) => arr.indexOf(name) !== index);
+    if (duplicateNames.length > 0) {
+      this.snackBar.open('Column names must be unique.', 'OK', {
+        duration: 5000,
+      });
+      return;
+    }
+
+    this.columns = validColumns;
+
+    const removed = this.originalColumns.filter((col) => !this.columns.map((c) => c.name).includes(col));
     if (removed.length) {
       this.todoService.tasks.forEach((task) => {
         removed.forEach((col) => {
@@ -98,24 +116,41 @@ export class AddDeleteColumnPopupComponent {
       });
     }
 
-    // Recompute completed percentage and isCompleted for each task, then persist
+    this.todoService.tasks.forEach((task) => {
+      this.columns.forEach((column) => {
+        const start = Math.min(column.startDay, column.endDay);
+        const end = Math.max(column.startDay, column.endDay);
+        const active = task.dayNumber >= start && task.dayNumber <= end;
+
+        if (active) {
+          if (!(column.name in task)) {
+            task[column.name] = false;
+          }
+        } else {
+          if (column.name in task) {
+            delete task[column.name];
+          }
+        }
+      });
+    });
+
     this.todoService.tasks.forEach((task) => {
       this.todoService.updateAndGetCompletedPercentage(task, true);
       task.isCompleted = Object.keys(task)
         .filter((key) => typeof task[key] === 'boolean' && key !== 'isCompleted')
         .every((key) => task[key]);
     });
-    this.todoService.updateLocalCache(this.todoService.tasks);
 
-    this.dialogRef.close(this.columns); // Close dialog with updated columns
+    this.todoService.updateLocalCache(this.todoService.tasks);
+    this.dialogRef.close(this.columns.map((c) => c.name));
   }
 
   closePopup(): void {
-    this.dialogRef.close(); // Close dialog without saving
+    this.dialogRef.close();
   }
-  trackByIndex(index: number, column: string): number {
-    return index; // Return the index to track the specific input elements
+
+  trackByIndex(index: number): number {
+    return index;
   }
-  
 }
 

@@ -85,12 +85,16 @@ export class TodoService {
         this.updateLocalCache(this.tasks);
       }
 
-      const firstTask=this.tasks[0];
+      const columnSet = new Set<string>();
+      this.tasks.forEach((task) => {
+        Object.keys(task).forEach((key) => columnSet.add(key));
+      });
+      const taskColumns = [...columnSet].filter(
+        (key) => key !== 'dayNumber' && key !== 'isCompleted' && key !== 'day' && key !== 'completed'
+      );
       this.displayedColumns = [
         'day',
-        ...Object.keys(firstTask).filter(
-          (key) => key !== 'dayNumber' && key !== 'isCompleted' && key !== 'day' && key !== 'completed'
-        ),
+        ...taskColumns,
         'completed',
       ];
             
@@ -139,15 +143,16 @@ export class TodoService {
   
 
       updateAndGetCompletedPercentage(row: any, updateRow: boolean = true): string {
-        const totalFields = this.displayedColumns.filter(x=> x!='completed' && x!='day');
+        const totalFields = this.displayedColumns
+          .filter((x) => x !== 'completed' && x !== 'day')
+          .filter((field) => typeof row[field] === 'boolean');
         const completedCount = totalFields.filter((field) => row[field] === true).length;
-        const percentage = Math.round((completedCount / totalFields.length) * 100);
+        const percentage = totalFields.length === 0 ? 0 : Math.round((completedCount / totalFields.length) * 100);
 
-      
         if (updateRow) {
           row.completed = `${percentage}%`;
-        } 
-    
+        }
+
         return `${percentage}%`;
       }
 

@@ -39,19 +39,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class TodoGridComponent implements  AfterViewInit ,OnChanges ,OnInit,AfterViewInit{
 
+  tasks: InputSignal<any[]> = input<any[]>([]);
 
-
-tasks: InputSignal<any[]> = input<any[]>([]);
-
-
- 
-  displayedColumns: InputSignal<string[] >=input( [
-    'day',
-    'books',
-    'skills',
-    'meditate',
-    'completed',
-  ]);
+  @Input() displayedColumns: string[] = [];
 
   get columns(){
     return this.todoService.displayedColumns;
@@ -112,21 +102,24 @@ this.todoService.initializeGridData();
   }
 
   getCompletedTooltip(row: any): string {
-    const totalFields = this.columns.filter(x=> x!='completed' && x!='day');
-    const completedCount = totalFields.filter((field) => row[field] === true).length;  
-    return `${completedCount} out of ${totalFields.length} task completed `
+    const totalFields = Object.keys(row).filter((key) => typeof row[key] === 'boolean' && key !== 'isCompleted');
+    const completedCount = totalFields.filter((field) => row[field] === true).length;
+    return `${completedCount} out of ${totalFields.length} task completed `;
   }
 
   isCompletedrow(row: any): boolean {
-    const totalFields = this.columns.filter(x=> x!='completed' && x!='day');
-    const completedCount = totalFields.filter((field) => row[field] === true).length;  
-    return totalFields.length === completedCount;
+    const totalFields = Object.keys(row).filter((key) => typeof row[key] === 'boolean' && key !== 'isCompleted');
+    const completedCount = totalFields.filter((field) => row[field] === true).length;
+    return totalFields.length > 0 && totalFields.length === completedCount;
   }
   
 
   openAddorDeletePopup() {
     const dialogRef = this.dialog.open(AddDeleteColumnPopupComponent, {
-      width: '400px',
+      width: 'auto',
+      minWidth: '560px',
+      maxWidth: '95vw',
+      panelClass: 'add-column-dialog',
       data: this.displayedColumns
     });
 
