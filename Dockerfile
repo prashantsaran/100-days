@@ -12,10 +12,10 @@ COPY . .
 RUN npm run build
 
 
-# Stage 2: Serve Angular application with Nginx
+# Stage 2: Serve Angular application using Nginx
 FROM nginx:alpine
 
-COPY --from=build /app/dist/100-days /usr/share/nginx/html
+COPY --from=build /app/dist/100-days/browser /usr/share/nginx/html
 
 EXPOSE 80
 
