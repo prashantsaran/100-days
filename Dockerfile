@@ -1,13 +1,22 @@
-FROM node:20
+# Stage 1: Build Angular application
+FROM node:20 AS build
 
-WORKDIR /myapp
+WORKDIR /app
 
-COPY . .
+COPY package*.json ./
 
 RUN npm install
 
-EXPOSE 4300
+COPY . .
 
-CMD [ "npm" , "start" ]
+RUN npm run build
 
 
+# Stage 2: Serve Angular application with Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/dist/100-days /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
